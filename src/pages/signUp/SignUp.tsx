@@ -3,7 +3,7 @@ import {Form, Input, Button, Checkbox, message, Row, Typography} from "antd";
 import api from "../../utils/api";
 import {auth, firestore} from "../../firebase";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection } from 'firebase/firestore';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 const {Title} = Typography;
 
@@ -58,15 +58,20 @@ const SignUp: React.FC<Props> = ({history}) => {
     // }
     try {
       const {user} = await createUserWithEmailAndPassword(auth, email, password);
-      // data = {user: {uid: xxx, phoneNumber: xx, phoneURL: xx, email: xxx, displayName: xxx}, credential: null, additionalUserInfo: wg, operationType: "signIn"}
+      // data = {user: {uid: xxx, phoneNumber: xx, photoURL: xx, email: xxx, displayName: xxx}, credential: null, additionalUserInfo: wg, operationType: "signIn"}
       console.log(user);
-      // uid 값을 RDB에 다시 삽입.
-      const {data} = await api.post(`/api/unauth/signUp`, {login_type: 'email', email, name, uid: user.uid, account_type: 'student'});
+
+      // firestore users에 저장
+      await setDoc(doc(firestore, 'users', user.uid), {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber
+      });
 
       history.push("/"); // login 으로 간다.
-    } catch (error) {
-      // message.error(error);
-      console.log(error);
+    } catch (error: any) {
+      message.error(error);
     }
   }, [history]);
 

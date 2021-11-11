@@ -4,15 +4,15 @@ import {LockOutlined, UserOutlined} from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import {ROUTES_PATH} from "../../routes";
 import {useDispatch} from "react-redux";
-import {auth} from "../../firebase";
+import {auth, firestore} from "../../firebase";
 import api from "../../utils/api";
 import {setUser} from "../../redux/reducers/UserReducer";
 import {jwtUtils} from "../../utils/jwtUtils";
 import {setToken} from "../../redux/reducers/AuthReducer";
 import {setLoading} from "../../redux/reducers/NotiReducer";
 import { getRedirectResult, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
-import firebase from "firebase/compat";
-import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+import { GoogleAuthProvider } from "firebase/auth";
+import {doc, setDoc} from "firebase/firestore";
 
 const {Title} = Typography;
 
@@ -63,22 +63,24 @@ const Login: React.FC<Props> = ({history}) =>  {
     dispatch(setLoading(true)); // await 아래에 가면 동작을 안한다.
 
     const result = await getRedirectResult(auth);
-    // console.log('redirect result: ', result);
+    console.log('redirect result: ', result);
     // console.log('redirect result: ', typeof result);
     // _.forOwn(result, (value, key) => console.log(value, key));
 
     if (result?.user) {
 
       // const credential = result.credential;
-      const gUser = result.user;
+      const {user} = result;
 
-      // uid, email, displayName 획득, uid로 서버 조회 없으면 insert 있으면
-      const {data} = await api.post(`/api/unauth/snsLogin`,
-        {login_type: 'google', email: gUser.email, name: gUser.displayName, uid: gUser.uid, account_type: 'student'});
-      const user = jwtUtils.getUser(data.token);
+      // firestore에 저장
+      await setDoc(doc(firestore, 'users', user.uid), {
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber,
+      });
 
-      dispatch(setToken(data.token))
-      dispatch(setUser(user))
+      dispatch(setUser(user));
 
       history.push('/');
     }
