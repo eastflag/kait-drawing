@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Redirect, Route, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "./index";
@@ -9,6 +9,7 @@ import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
 
 import './PrivateRoute.scss';
+import {AuthContext} from "../Auth";
 
 const {Content, Header} = Layout;
 const {Text} = Typography;
@@ -18,16 +19,11 @@ const PrivateRoute = (props) => {
   const history = useHistory();
   const { component: RouteComponent, ...rest } = props;
 
-  const token = useSelector(({Auth}) => Auth.token);
+  const {currentUser} = useContext(AuthContext);
 
   useEffect(() => {
-    if (!jwtUtils.isAuth(token)) {
+    if (!jwtUtils.isAuth(currentUser)) {
       return;
-    }
-
-    // cleanup 에서의 함수는 closure로서 초기상태를 유지한다. 연결하기 위해서는 useRef나 객체를 사용해야함.
-    return () => {
-
     }
   }, []);
 
@@ -39,8 +35,7 @@ const PrivateRoute = (props) => {
 
   // 아래 view가 리턴되지 않도록 한다. jwtUtils.getRoles() 실행시 에러 발생함.
   // 이후에 useEffect가 실행된다.
-  if (!jwtUtils.isAuth(token)) {
-    dispatch(setUser(null));
+  if (!jwtUtils.isAuth(currentUser)) {
     return <Redirect to={ROUTES_PATH.Login} />
   }
 
