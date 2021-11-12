@@ -12,7 +12,7 @@ import {setToken} from "../../redux/reducers/AuthReducer";
 import {setLoading} from "../../redux/reducers/NotiReducer";
 import { getRedirectResult, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { GoogleAuthProvider } from "firebase/auth";
-import {doc, setDoc} from "firebase/firestore";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 const {Title} = Typography;
 
@@ -62,50 +62,66 @@ const Login: React.FC<Props> = ({history}) =>  {
   const getGoogleRedirectResult = async () => {
     dispatch(setLoading(true)); // await 아래에 가면 동작을 안한다.
 
-    const result = await getRedirectResult(auth);
-    console.log('redirect result: ', result);
-    // console.log('redirect result: ', typeof result);
-    // _.forOwn(result, (value, key) => console.log(value, key));
+    try {
+      const result = await getRedirectResult(auth);
+      if (!result!.user) {
+        dispatch(setLoading(false));
+        return;
+      }
 
-    if (result?.user) {
+      console.log('redirect result: ', result);
 
-      // const credential = result.credential;
-      const {user} = result;
+      const docRef = doc(firestore, 'users', result!.user.uid);
+      const docSnap = await getDoc(docRef);
+      let user = {uid: result!.user.uid};
 
-      // firestore에 저장
-      await setDoc(doc(firestore, 'users', user.uid), {
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        phoneNumber: user.phoneNumber,
-      });
+      if (!docSnap.exists()) {
+        // firestore에  없다면 저장
+        const userData = {
+          email: result!.user.email,
+          displayName: result!.user.displayName,
+          photoURL: result!.user.photoURL,
+          phoneNumber: result!.user.phoneNumber,
+        };
+        await setDoc(doc(firestore, 'users', result!.user.uid), userData);
+        user = { ...user, ...userData };
+      } else {
+        user = { ...user,  ...docSnap.data() }
+      }
 
       dispatch(setUser(user));
 
       history.push('/');
+    } catch(error: any) {
+      // message.error(error.message);
     }
 
     dispatch(setLoading(false));
   }
 
+  // email, password 로그인
   const onFinish = async (values: any) => {
     console.log('Received values of form: ', values);
     try {
       const {email, password} = values;
       const result = await signInWithEmailAndPassword(auth, email, password);
 
-      // uid로 사용자 정보를 얻어서 redux에 설정
-      const {data} = await api.get(`/api/unauth/login?uid=${result.user.uid}`);
-      console.log(data);
-      const user = jwtUtils.getUser(data.token);
+      // firestore에서 uid로 사용자 정보를 얻어서 redux에 설정
+      console.log(result);
 
-      dispatch(setToken(data.token))
-      dispatch(setUser(user))
+      const docRef = doc(firestore, 'users', result.user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const user = {
+          uid: result.user.uid,
+          ...docSnap.data()
+        }
+        dispatch(setUser(user));
+      }
 
-      history.push('/');
-    } catch (error) {
-      console.log(error);
-      // message.error(error.message);
+      // history.push('/');
+    } catch (error: any) {
+      message.error(error.message);
     }
   };
 

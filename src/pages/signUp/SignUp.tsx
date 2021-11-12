@@ -48,14 +48,7 @@ const SignUp: React.FC<Props> = ({history}) => {
   const onFinish = useCallback(async (values) => {
     console.log('Received values of form: ', values);
     const {email, name, password} = values;
-    // const {data} = await api.post(`/api/unauth/signUp`, {email, name, password});
-    // console.log(data);
-    // if (data.result === 0) {
-    //   // token save
-    //   history.push('/');
-    // } else {
-    //   message.error(data.message);
-    // }
+
     try {
       const {user} = await createUserWithEmailAndPassword(auth, email, password);
       // data = {user: {uid: xxx, phoneNumber: xx, photoURL: xx, email: xxx, displayName: xxx}, credential: null, additionalUserInfo: wg, operationType: "signIn"}
@@ -63,10 +56,8 @@ const SignUp: React.FC<Props> = ({history}) => {
 
       // firestore users에 저장
       await setDoc(doc(firestore, 'users', user.uid), {
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        phoneNumber: user.phoneNumber
+        email: email,
+        displayName: name,
       });
 
       history.push("/"); // login 으로 간다.

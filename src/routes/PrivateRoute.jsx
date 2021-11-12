@@ -40,7 +40,7 @@ const PrivateRoute = (props) => {
   // 아래 view가 리턴되지 않도록 한다. jwtUtils.getRoles() 실행시 에러 발생함.
   // 이후에 useEffect가 실행된다.
   if (!jwtUtils.isAuth(token)) {
-    logout();
+    dispatch(setUser(null));
     return <Redirect to={ROUTES_PATH.Login} />
   }
 
