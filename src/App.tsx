@@ -19,7 +19,7 @@ const App = () => {
     <AuthProvider>
       <Spin spinning={loading} size="large">
         <Layout style={{height: '100vh'}}>
-          <Layout.Content className="layout">
+          <Layout.Content>
             <BrowserRouter>
               <Switch>
                 <PrivateRoute path={ROUTES_PATH.Main} component={Main}></PrivateRoute>

@@ -1,0 +1,12 @@
+.canvas-wrapper {
+  border: 1px solid #999999;
+  width: 100%;
+  height: 100%;
+  background-color: #999999;
+
+  .canvas {
+    cursor: crosshair;
+    //background-size: 100% 100%;
+    background-color: #ffffff;
+  }
+}

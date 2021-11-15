@@ -1,12 +1,12 @@
 import {Layout} from "antd";
+import {MyCanvas} from "./MyCanvas";
+import React from "react";
 
-export const Main = () => {
+export const Main: React.FC = () => {
 
   return (
-    <Layout>
-      <Layout.Content>
-        admin
-      </Layout.Content>
-    </Layout>
+    < >
+      <MyCanvas></MyCanvas>
+    </>
   );
 }

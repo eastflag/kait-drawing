@@ -7,11 +7,11 @@ import {Dropdown, Layout, Menu, Row, Space, Typography} from "antd";
 import {HomeTwoTone, MenuOutlined} from '@ant-design/icons';
 import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
-
-import './PrivateRoute.scss';
 import {AuthContext} from "../Auth";
 
-const {Content, Header} = Layout;
+import styles from './PrivateRoute.module.scss';
+
+const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
 
 const PrivateRoute = (props) => {
@@ -60,19 +60,17 @@ const PrivateRoute = (props) => {
   );
 
   return (
-    <Layout>
-      <Header>
-        <Row justify="space-between" align="middle" className="private_header">
-          <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Main)} className="header__title" />
-          <Space size="large" align="center">
-            <Dropdown overlay={menu} placement="bottomRight">
-              <MenuOutlined className="header__menu" />
-            </Dropdown>
-          </Space>
+    <Layout className={styles.container}>
+      <Header className={styles.header}>
+        <Row style={{height: '100%'}} justify="space-between" align="middle">
+          <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Main)} />
+          <Dropdown overlay={menu} placement="bottomRight">
+            <MenuOutlined />
+          </Dropdown>
         </Row>
       </Header>
 
-      <Content style={{padding: '0', marginTop: '50px'}}>
+      <Content className={styles.body}>
         <Route
           {...rest}
           render={
@@ -80,6 +78,10 @@ const PrivateRoute = (props) => {
           }
         />
       </Content>
+
+      <Footer className={styles.footer}>
+        <span>footer</span>
+      </Footer>
     </Layout>
   );
 };
