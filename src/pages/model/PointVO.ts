@@ -1,4 +1,4 @@
 export class PointVO {
-  constructor(x: number, y: number) {
+  constructor(public x: number, public y: number) {
   }
 }

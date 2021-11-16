@@ -11,13 +11,13 @@ export const MyCanvas = () => {
   const isDrawingRef = useRef<boolean>(false);
 
   // 현재 그려지는 객체
-  const [drObj, setDrObj] = useState<ShapeVO|null>(null);
+  const [drObj, setDrObj] = useState<ShapeVO>(new ShapeVO());
   // 캔버스에 그려지는 모든 객체
   const [drList, setDrList] = useState<ShapeVO[]>([]);
 
   useEffect(() => {
     // We can't access the rendering context until the canvas is mounted to the DOM.
-    // Once we have it, provide it to all child components.
+    // canvas 넓이와 높이를 부모에 fit하게 조정
     const myCanvas = canvasRef.current;
     myCanvas.width = document.getElementById('canvas-wrapper')?.clientWidth;
     myCanvas.height = document.getElementById('canvas-wrapper')?.clientHeight;
@@ -31,9 +31,9 @@ export const MyCanvas = () => {
     isDrawingRef.current = true;
 
     // 저장
-    const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.LINE);
+    const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
     drObj.pointList.push(new PointVO( nativeEvent.offsetX, nativeEvent.offsetY));
-    setDrObj((prevDrObj: ShapeVO | null) => drObj);
+    setDrObj((prevDrObj: ShapeVO) => drObj);
 
     // 그리기
     contextRef.current.lineWidth = drObj.thickness;
@@ -49,7 +49,7 @@ export const MyCanvas = () => {
 
     // 저장
     const {nativeEvent} = e;
-    setDrObj((prevDrObj: ShapeVO | null) => {
+    setDrObj((prevDrObj: ShapeVO) => {
       prevDrObj?.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
       return prevDrObj;
     });
@@ -63,8 +63,18 @@ export const MyCanvas = () => {
     const {nativeEvent} = e;
     console.log('mouse up: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
     // 저장
+    setDrObj((prevDrObj: ShapeVO) => {
+      prevDrObj?.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
+      prevDrObj.endTime = new Date().getTime();
+      drList.push(prevDrObj);
+      setDrList(drList);
+      return prevDrObj;
+    });
+    // 초기화
     isDrawingRef.current = false;
-    setDrObj((prevDrObj: ShapeVO | null) => null);
+
+    setTimeout(() => console.log(drList), 1000);
+
   }
 
   return (
