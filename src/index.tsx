@@ -8,7 +8,7 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ROUTES_PATH} from "./routes";
 import App from './App';
 
-import './index.css';
+import './index.scss';
 
 import reportWebVitals from './reportWebVitals';
 import { Admin } from './pages/admin';

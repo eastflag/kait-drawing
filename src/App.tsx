@@ -10,6 +10,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 
 import './App.css';
 import {AuthProvider} from "./Auth";
+import {DailyStudy} from "./pages/daily_study/DailyStudy";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ const App = () => {
             <BrowserRouter>
               <Switch>
                 <PrivateRoute path={ROUTES_PATH.Main} component={Main}></PrivateRoute>
+                <PrivateRoute path={ROUTES_PATH.DailyStudy} component={DailyStudy}></PrivateRoute>
                 {/*<PrivateRoute exact path={ROUTES_PATH.Profile} component={ModifyProfile}></PrivateRoute>*/}
                 {/*<PrivateRoute exact path={ROUTES_PATH.Password} component={ModifyPassword}></PrivateRoute>*/}
                 <Route path={ROUTES_PATH.Login} component={Login}></Route>

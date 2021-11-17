@@ -2,7 +2,7 @@ export const ROUTES_PATH = {
   Admin: "/admin",
   Root: "/",
   Main: "/main",
-  Chat: "/chat/:room_id",
+  DailyStudy: "/daily_study",
   Profile: "/profile",
   Password: "/password",
   Login: "/login",

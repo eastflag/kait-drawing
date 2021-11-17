@@ -21,3 +21,26 @@ code {
   text-align: start;
   font-size: 1rem;
 }
+
+// calender
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  .ant-badge-status {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    .ant-badge-status-text {
+      font-size: 0.8rem;
+    }
+  }
+}
+//.notes-month {
+//  font-size: 28px;
+//  text-align: center;
+//}
+//.notes-month section {
+//  font-size: 28px;
+//}
