@@ -1,17 +1,10 @@
+import {UserVO} from "../../pages/model/UserVO";
+
 const SET_USER = 'set_user';
 
-/*{
-  id,
-  uid, // firebase uid
-  email,
-  name,
-  account_type,
-}*/
-const UserInitialState = {
-  user: null
-}
+const UserInitialState: UserVO = {};
 
-export const setUser = (user: any) => ({
+export const setUser = (user: UserVO) => ({
   type: SET_USER,
   user
 })
@@ -21,7 +14,7 @@ export const UserReducer = (state = UserInitialState, action: any) => {
     case SET_USER:
       return {
         ...state,
-        user: action.user
+        ...action.user
       }
     default:
       return state;

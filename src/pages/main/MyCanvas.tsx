@@ -1,10 +1,16 @@
+import React from "react";
 import styles from './MyCanvas.module.scss';
 import {useEffect, useRef, useState} from "react";
 import {ShapeVO} from "../model/ShapeVO";
 import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
 
-export const MyCanvas = () => {
+interface Props {
+  answer: any;
+  setAnswer: any;
+}
+
+export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -12,8 +18,6 @@ export const MyCanvas = () => {
 
   // 현재 그려지는 객체
   const [drObj, setDrObj] = useState<ShapeVO>(new ShapeVO());
-  // 캔버스에 그려지는 모든 객체
-  const [drList, setDrList] = useState<ShapeVO[]>([]);
 
   useEffect(() => {
     // We can't access the rendering context until the canvas is mounted to the DOM.
@@ -25,6 +29,30 @@ export const MyCanvas = () => {
     contextRef.current.imageSmoothingEnabled = false;
   }, [])
 
+  useEffect(() => {
+    // 지우기
+    contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+    answer.forEach((item: ShapeVO) => {
+      contextRef.current.lineWidth = item.thickness;
+      contextRef.current.strokeStyle = item.color;
+      let idx = 1;
+      let point: PointVO;
+      for (point of item.pointList) {
+        if (idx === 1) {
+          contextRef.current.beginPath();
+          contextRef.current.moveTo(point.x, point.y);
+        } else if (idx === item.pointList.length) {
+
+        } else {
+          contextRef.current.lineTo(point.x, point.y);
+          contextRef.current.stroke();
+        }
+        ++idx;
+      }
+    });
+  }, [answer]);
+
   const handleMouseDown = (e: any) => {
     const {nativeEvent} = e;
     console.log('mouse down: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
@@ -32,7 +60,7 @@ export const MyCanvas = () => {
 
     // 저장
     const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
-    drObj.pointList.push(new PointVO( nativeEvent.offsetX, nativeEvent.offsetY));
+    drObj.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
     setDrObj((prevDrObj: ShapeVO) => drObj);
 
     // 그리기
@@ -66,14 +94,14 @@ export const MyCanvas = () => {
     setDrObj((prevDrObj: ShapeVO) => {
       prevDrObj?.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
       prevDrObj.endTime = new Date().getTime();
-      drList.push(prevDrObj);
-      setDrList(drList);
+      answer.push(prevDrObj);
+      setAnswer(answer);
       return prevDrObj;
     });
     // 초기화
     isDrawingRef.current = false;
 
-    setTimeout(() => console.log(drList), 1000);
+    setTimeout(() => console.log(answer), 1000);
 
   }
 
