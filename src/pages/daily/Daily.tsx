@@ -1,11 +1,15 @@
 import {Badge, Calendar} from "antd";
 import moment from "moment";
-import {useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {collection, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 
-export const Daily = () => {
+interface Props {
+  history: any;
+}
+
+export const Daily: React.FC<Props> = ({history}) => {
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
 
   useEffect(() => {
@@ -40,7 +44,7 @@ export const Daily = () => {
     const index = questions.findIndex(item => item.date === value.format('YYYY-MM-DD'));
     console.log(index);
     if (index >= 0) {
-
+      history.push(`/study/${value.format('YYYY-MM-DD')}`);
     }
   }
 
