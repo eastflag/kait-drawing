@@ -5,7 +5,7 @@ import {collection, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 
-export const DailyStudy = () => {
+export const Daily = () => {
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
 
   useEffect(() => {

@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import {Layout, Spin} from "antd";
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import {ROUTES_PATH} from "./routes";
-import {Main} from "./pages/main/Main";
+import {Study} from "./pages/study/Study";
 import Login from "./pages/login/Login";
 import SignUp from "./pages/signUp/SignUp";
 import PrivateRoute from "./routes/PrivateRoute";
 
 import './App.css';
 import {AuthProvider} from "./Auth";
-import {DailyStudy} from "./pages/daily_study/DailyStudy";
+import {Daily} from "./pages/daily/Daily";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -23,13 +23,13 @@ const App = () => {
           <Layout.Content>
             <BrowserRouter>
               <Switch>
-                <PrivateRoute path={ROUTES_PATH.Main} component={Main}></PrivateRoute>
-                <PrivateRoute path={ROUTES_PATH.DailyStudy} component={DailyStudy}></PrivateRoute>
+                <PrivateRoute path={ROUTES_PATH.Daily} component={Daily}></PrivateRoute>
+                <PrivateRoute path={ROUTES_PATH.Study} component={Study}></PrivateRoute>
                 {/*<PrivateRoute exact path={ROUTES_PATH.Profile} component={ModifyProfile}></PrivateRoute>*/}
                 {/*<PrivateRoute exact path={ROUTES_PATH.Password} component={ModifyPassword}></PrivateRoute>*/}
                 <Route path={ROUTES_PATH.Login} component={Login}></Route>
                 <Route path={ROUTES_PATH.SignUp} component={SignUp}></Route>
-                <Redirect path="*" to="/main" />
+                <Redirect path="*" to="/daily" />
               </Switch>
             </BrowserRouter>
           </Layout.Content>

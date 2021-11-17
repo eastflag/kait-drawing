@@ -5,7 +5,7 @@ import {collection, doc, getDoc, getDocs, query, setDoc, where} from "firebase/f
 import {firestore} from "../../firebase";
 import { QuestionVO } from "../model/QuestionVO";
 
-import styles from './Main.module.scss';
+import styles from './Study.module.scss';
 import moment from "moment";
 import {useSelector} from "react-redux";
 import {UserVO} from "../model/UserVO";
@@ -14,7 +14,7 @@ import {ShapeVO} from "../model/ShapeVO";
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
 
-export const Main: React.FC = () => {
+export const Study: React.FC = () => {
   const user: UserVO = useSelector(({User}: any) => User);
 
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
