@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "./index";
 import {jwtUtils} from "../utils/jwtUtils";
 import {Dropdown, Layout, Menu, Row, Space, Typography} from "antd";
-import {HomeTwoTone, MenuOutlined, ScheduleOutlined, SettingOutlined, SnippetsOutlined} from '@ant-design/icons';
+import {HomeTwoTone, LeftOutlined, MenuOutlined, ScheduleOutlined, SettingOutlined, SnippetsOutlined} from '@ant-design/icons';
 import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
 import {AuthContext} from "../Auth";
@@ -22,6 +22,7 @@ const PrivateRoute = (props: any) => {
   const {currentUser} = useContext(AuthContext);
 
   useEffect(() => {
+    console.log(props);
     if (!jwtUtils.isAuth(currentUser)) {
       return;
     }
@@ -62,12 +63,20 @@ const PrivateRoute = (props: any) => {
   return (
     <Layout className={styles.container}>
       <Header className={styles.header}>
-        <Row style={{height: '100%'}} justify="space-between" align="middle">
-          <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Root)} />
-          <Dropdown overlay={menu} placement="bottomRight">
-            <MenuOutlined />
-          </Dropdown>
-        </Row>
+        {/*left*/}
+        {
+          props.path === '/daily' ? <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Root)} />
+            : <LeftOutlined style={{fontSize: '1.4rem'}} onClick={() => history.push('/')} />
+        }
+        {/*center*/}
+        { props.path === '/daily' && <span>오늘의 학습</span> }
+        { props.path.indexOf('/study') >= 0 && <span>문제 풀이</span> }
+        { props.path === '/category' && <span>카테고리별 학습</span> }
+        { props.path === '/setting' && <span>설정</span> }
+        {/*right*/}
+        <Dropdown overlay={menu} placement="bottomRight">
+          <MenuOutlined />
+        </Dropdown>
       </Header>
 
       <Content className={styles.body}>
