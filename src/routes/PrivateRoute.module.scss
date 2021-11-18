@@ -8,9 +8,9 @@
 
 .header {
   padding: 0 1rem !important;
-  height: 3rem !important;
+  height: 3.2rem !important;
   flex-shrink: 0;
-  background: #ffffff !important;
+  background: #f2f2f2 !important;
   border-bottom: 1px solid #bbbbbb;
 }
 .body{
@@ -19,7 +19,24 @@
   min-height: 2em;
 }
 .footer{
-  height: 3rem !important;
+  height: 3.2rem !important;
+  padding: 0 1rem !important;
   flex-shrink: 0;
+  background: #f2f2f2 !important;
   border-top: 1px solid #bbbbbb;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  .box {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    cursor: pointer;
+    .icon {
+      font-size: 1.4rem;
+    }
+    .text {
+      font-size: 0.8rem;
+    }
+  }
 }

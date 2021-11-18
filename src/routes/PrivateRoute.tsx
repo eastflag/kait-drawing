@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "./index";
 import {jwtUtils} from "../utils/jwtUtils";
 import {Dropdown, Layout, Menu, Row, Space, Typography} from "antd";
-import {HomeTwoTone, MenuOutlined} from '@ant-design/icons';
+import {HomeTwoTone, MenuOutlined, ScheduleOutlined, SettingOutlined, SnippetsOutlined} from '@ant-design/icons';
 import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
 import {AuthContext} from "../Auth";
@@ -14,7 +14,7 @@ import styles from './PrivateRoute.module.scss';
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
 
-const PrivateRoute = (props) => {
+const PrivateRoute = (props: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { component: RouteComponent, ...rest } = props;
@@ -29,7 +29,7 @@ const PrivateRoute = (props) => {
 
   const logout = () => {
     dispatch(setToken(''));
-    dispatch(setUser(null));
+    dispatch(setUser({}));
     history.push('/login');
   }
 
@@ -63,7 +63,7 @@ const PrivateRoute = (props) => {
     <Layout className={styles.container}>
       <Header className={styles.header}>
         <Row style={{height: '100%'}} justify="space-between" align="middle">
-          <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Main)} />
+          <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Root)} />
           <Dropdown overlay={menu} placement="bottomRight">
             <MenuOutlined />
           </Dropdown>
@@ -80,7 +80,18 @@ const PrivateRoute = (props) => {
       </Content>
 
       <Footer className={styles.footer}>
-        <span>footer</span>
+        <div className={styles.box} onClick={() => history.push('/daily')}>
+          <ScheduleOutlined className={styles.icon} />
+          <span className={styles.text}>일별</span>
+        </div>
+        <div className={styles.box} onClick={() => history.push('/category')}>
+          <SnippetsOutlined className={styles.icon} />
+          <span className={styles.text}>카테고리</span>
+        </div>
+        <div className={styles.box} onClick={() => history.push('/setting')}>
+          <SettingOutlined className={styles.icon} />
+          <span className={styles.text}>설정</span>
+        </div>
       </Footer>
     </Layout>
   );

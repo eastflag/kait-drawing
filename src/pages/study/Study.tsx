@@ -14,7 +14,11 @@ import {ShapeVO} from "../model/ShapeVO";
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
 
-export const Study: React.FC = () => {
+interface Props {
+  match: any;
+}
+
+export const Study: React.FC<Props> = ({match}) => {
   const user: UserVO = useSelector(({User}: any) => User);
 
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
@@ -24,6 +28,7 @@ export const Study: React.FC = () => {
   const [answer, setAnswer] = useState([]);
 
   useEffect(() => {
+    console.log(match.params);
     init();
   }, []);
 
@@ -39,9 +44,8 @@ export const Study: React.FC = () => {
   }, [currentPage]);
 
   const init = useCallback(async () => {
-    // 오늘 날짜의 모든 문제 리스트를 가져온다.
-    const today = moment().format('YYYY-MM-DD');
-    console.log('today: ', today);
+    // match.params.date 문제 리스트를 가져온다.
+    const today = match.params.date;
     const q = query(collection(firestore, "questions"), where("date", "==", today));
     const querySnapshot = await getDocs(q);
     const tempQuestions: any = [];
@@ -78,7 +82,10 @@ export const Study: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}></div>
+      <Row className={styles.header} align="middle" justify="space-between">
+        <Space></Space>
+        <div>{currentQuestion?.grade} - {currentQuestion.chapter}</div>
+      </Row>
       <div className={styles.body}>
         <MyCanvas answer={answer} setAnswer={setAnswer}></MyCanvas>
         <div className={styles.question}>

@@ -3,6 +3,8 @@ export const ROUTES_PATH = {
   Root: "/",
   Study: "/study/:date",
   Daily: "/daily",
+  Category: "/category",
+  Setting: "/setting",
   Profile: "/profile",
   Password: "/password",
   Login: "/login",
