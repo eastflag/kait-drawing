@@ -98,45 +98,35 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
   }
 
   const handleMouseDown = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
+    // e.preventDefault();
+    // e.stopPropagation();
     const {nativeEvent} = e;
     console.log('mouse down: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
     drawingStart(nativeEvent.offsetX, nativeEvent.offsetY);
   }
 
   const handleTouchStart = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
     console.log('touchStart: ', e);
     const rect = e.target.getBoundingClientRect();
     drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
   }
 
   const handleMouseMove = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
     const {nativeEvent} = e;
     drawingMove(nativeEvent.offsetX, nativeEvent.offsetY);
   }
 
   const handleTouchMove = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
     const rect = e.target.getBoundingClientRect();
     drawingMove(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
   }
 
   const handleMouseUp = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
     console.log('touchMove: ', e);
     drawingEnd();
   }
 
   const handleTouchEnd = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
     console.log('touchEnd: ', e);
     drawingEnd();
   }

@@ -1,10 +1,17 @@
 import React, {useContext, useEffect} from 'react';
 import {Redirect, Route, useHistory} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {ROUTES_PATH} from "./index";
 import {jwtUtils} from "../utils/jwtUtils";
-import {Dropdown, Layout, Menu, Row, Space, Typography} from "antd";
-import {HomeTwoTone, LeftOutlined, MenuOutlined, ScheduleOutlined, SettingOutlined, SnippetsOutlined} from '@ant-design/icons';
+import {Dropdown, Layout, Menu, Typography} from "antd";
+import {
+  HomeTwoTone,
+  LeftOutlined,
+  MenuOutlined,
+  ScheduleOutlined,
+  SettingOutlined,
+  SnippetsOutlined
+} from '@ant-design/icons';
 import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
 import {AuthContext} from "../Auth";
