@@ -53,46 +53,41 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
     });
   }, [answer]);
 
-  const handleMouseDown = (e: any) => {
-    const {nativeEvent} = e;
-    console.log('mouse down: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
+  const drawingStart = (x: number, y: number) => {
     isDrawingRef.current = true;
 
     // 저장
     const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
-    drObj.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
+    drObj.pointList.push(new PointVO(x, y));
     setDrObj((prevDrObj: ShapeVO) => drObj);
 
     // 그리기
     contextRef.current.lineWidth = drObj.thickness;
     contextRef.current.strokeStyle = drObj.color;
     contextRef.current.beginPath();
-    contextRef.current.moveTo(nativeEvent.offsetX, nativeEvent.offsetY);
+    contextRef.current.moveTo(x, y);
   }
 
-  const handleMouseMove = (e: any) => {
+  const drawingMove = (x: number, y: number) => {
     if (!isDrawingRef.current) {
       return;
     }
 
     // 저장
-    const {nativeEvent} = e;
     setDrObj((prevDrObj: ShapeVO) => {
-      prevDrObj?.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
+      prevDrObj?.pointList.push(new PointVO(x, y));
       return prevDrObj;
     });
 
     // 그리기
-    contextRef.current.lineTo(nativeEvent.offsetX, nativeEvent.offsetY);
+    contextRef.current.lineTo(x, y);
     contextRef.current.stroke();
   }
 
-  const handleMouseUp = (e: any) => {
-    const {nativeEvent} = e;
-    console.log('mouse up: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
+  const drawingEnd = () => {
     // 저장
     setDrObj((prevDrObj: ShapeVO) => {
-      prevDrObj?.pointList.push(new PointVO(nativeEvent.offsetX, nativeEvent.offsetY));
+      // prevDrObj?.pointList.push(new PointVO(x, y));
       prevDrObj.endTime = new Date().getTime();
       answer.push(prevDrObj);
       setAnswer(answer);
@@ -100,16 +95,49 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
     });
     // 초기화
     isDrawingRef.current = false;
+  }
 
-    setTimeout(() => console.log(answer), 1000);
+  const handleMouseDown = (e: any) => {
+    const {nativeEvent} = e;
+    console.log('mouse down: ', nativeEvent.offsetX, ' ', nativeEvent.offsetY);
+    drawingStart(nativeEvent.offsetX, nativeEvent.offsetY);
+  }
 
+  const handleTouchStart = (e: any) => {
+    console.log('touchStart: ', e);
+    const rect = e.target.getBoundingClientRect();
+    drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
+  }
+
+  const handleMouseMove = (e: any) => {
+    const {nativeEvent} = e;
+    drawingMove(nativeEvent.offsetX, nativeEvent.offsetY);
+  }
+
+  const handleTouchMove = (e: any) => {
+    const rect = e.target.getBoundingClientRect();
+    drawingMove(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
+  }
+
+  const handleMouseUp = (e: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const {nativeEvent} = e;
+    console.log('touchMove: ', e);
+    drawingEnd();
+  }
+
+  const handleTouchEnd = (e: any) => {
+    const {nativeEvent} = e;
+    console.log('touchEnd: ', e);
+    drawingEnd();
   }
 
   return (
-
     <div className={styles['canvas-wrapper']} ref={wrapperRef} id="canvas-wrapper">
       <canvas className={styles.canvas} ref={canvasRef} id="canvas"
-        onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}></canvas>
+        onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
+        onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}></canvas>
     </div>
   );
 }
