@@ -106,9 +106,13 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
   }
 
   const handleTouchStart = (e: any) => {
+    // e.preventDefault();
+    // e.stopPropagation();
+    // e.stopImmediatePropagation();
     console.log('touchStart: ', e);
     const rect = e.target.getBoundingClientRect();
     drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
+    return false;
   }
 
   const handleMouseMove = (e: any) => {
@@ -135,7 +139,8 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
     <div className={styles['canvas-wrapper']} ref={wrapperRef} id="canvas-wrapper">
       <canvas className={styles.canvas} ref={canvasRef} id="canvas"
         onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
-        onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}></canvas>
+        onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}
+        style={{touchAction: 'none'}}></canvas>
     </div>
   );
 }
