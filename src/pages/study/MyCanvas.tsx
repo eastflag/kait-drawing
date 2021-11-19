@@ -4,13 +4,15 @@ import {useEffect, useRef, useState} from "react";
 import {ShapeVO} from "../model/ShapeVO";
 import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
+import _ from "lodash";
 
 interface Props {
   answer: any;
   setAnswer: any;
+  saveAnswer: any;
 }
 
-export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
+export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -84,6 +86,9 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
     contextRef.current.stroke();
   }
 
+  // todo: debounce가 제대로 적용되지 않는다.
+  const debounceSave = _.debounce(saveAnswer, 3000);
+
   const drawingEnd = () => {
     // 저장
     setDrObj((prevDrObj: ShapeVO) => {
@@ -95,6 +100,8 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer}) => {
     });
     // 초기화
     isDrawingRef.current = false;
+    // 저장
+    debounceSave();
   }
 
   const handleMouseDown = (e: any) => {

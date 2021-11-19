@@ -1,4 +1,4 @@
-import {Button, Layout, Row, Space} from "antd";
+import {Button, Row, Space} from "antd";
 import {MyCanvas} from "./MyCanvas";
 import React, {useCallback, useEffect, useState} from "react";
 import {collection, doc, getDoc, getDocs, query, setDoc, where} from "firebase/firestore";
@@ -6,7 +6,6 @@ import {firestore} from "../../firebase";
 import { QuestionVO } from "../model/QuestionVO";
 
 import styles from './Study.module.scss';
-import moment from "moment";
 import {useSelector} from "react-redux";
 import {UserVO} from "../model/UserVO";
 import {ShapeVO} from "../model/ShapeVO";
@@ -73,10 +72,17 @@ export const Study: React.FC<Props> = ({match}) => {
   }
 
   const saveAnswer = async () => {
-    console.log(answer);
     const ref = doc(firestore, `/users/${user.uid}/questions/${questions[currentPage - 1].id}`);
     await setDoc(ref, {
       answer: answer.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))}))
+    }, {merge: true});
+  }
+
+  const submitAnswer = async () => {
+    const ref = doc(firestore, `/users/${user.uid}/questions/${questions[currentPage - 1].id}`);
+    await setDoc(ref, {
+      answer: answer.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))})),
+      submit: true
     }, {merge: true});
   }
 
@@ -87,7 +93,7 @@ export const Study: React.FC<Props> = ({match}) => {
         <div>{currentQuestion?.grade} - {currentQuestion.chapter}</div>
       </Row>
       <div className={styles.body}>
-        <MyCanvas answer={answer} setAnswer={setAnswer}></MyCanvas>
+        <MyCanvas answer={answer} setAnswer={setAnswer} saveAnswer={saveAnswer}></MyCanvas>
         <div className={styles.question}>
           {
             currentQuestion && <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
@@ -103,7 +109,7 @@ export const Study: React.FC<Props> = ({match}) => {
             ))
           }
         </Space>
-        <Button type="primary" onClick={saveAnswer}>save</Button>
+        <Button type="primary" onClick={submitAnswer}>제출</Button>
       </Row>
     </div>
   );
