@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import {Redirect, Route, useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "./index";
 import {jwtUtils} from "../utils/jwtUtils";
 import {Dropdown, Layout, Menu, Typography} from "antd";
@@ -17,6 +17,7 @@ import {setUser} from "../redux/reducers/UserReducer";
 import {AuthContext} from "../Auth";
 
 import styles from './PrivateRoute.module.scss';
+import {UserVO} from "../pages/model/UserVO";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
@@ -27,6 +28,7 @@ const PrivateRoute = (props: any) => {
   const { component: RouteComponent, ...rest } = props;
 
   const {currentUser} = useContext(AuthContext);
+  const user: UserVO = useSelector(({User}: any) => User);
 
   useEffect(() => {
     console.log(props);
@@ -46,6 +48,10 @@ const PrivateRoute = (props: any) => {
   if (!jwtUtils.isAuth(currentUser)) {
     return <Redirect to={ROUTES_PATH.Login} />
   }
+
+  // if (!jwtUtils.isAdmin(user)) {
+  //   return <Redirect to={ROUTES_PATH.Root} />
+  // }
 
   const menu = (
     <Menu>

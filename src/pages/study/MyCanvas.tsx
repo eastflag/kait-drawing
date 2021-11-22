@@ -20,6 +20,8 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
 
   // 현재 그려지는 객체
   const [drObj, setDrObj] = useState<ShapeVO>(new ShapeVO());
+  // 현재 그려지는 객체 리스트 (멀티 터치 지원)
+  const drList: ShapeVO[] = [];
 
   useEffect(() => {
     // We can't access the rendering context until the canvas is mounted to the DOM.
@@ -36,21 +38,15 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     answer.forEach((item: ShapeVO) => {
-      contextRef.current.lineWidth = item.thickness;
-      contextRef.current.strokeStyle = item.color;
-      let idx = 1;
-      let point: PointVO;
-      for (point of item.pointList) {
-        if (idx === 1) {
+      if (item.pointList.length >= 2) {
+        for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
-          contextRef.current.moveTo(point.x, point.y);
-        } else if (idx === item.pointList.length) {
-
-        } else {
-          contextRef.current.lineTo(point.x, point.y);
+          contextRef.current.lineWidth = item.thickness;
+          contextRef.current.strokeStyle = item.color;
+          contextRef.current.moveTo(item.pointList[i-1].x, item.pointList[i-1].y);
+          contextRef.current.lineTo(item.pointList[i].x, item.pointList[i].y);
           contextRef.current.stroke();
         }
-        ++idx;
       }
     });
   }, [answer]);
@@ -109,28 +105,74 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
     drawingStart(nativeEvent.offsetX, nativeEvent.offsetY);
   }
 
-  const handleTouchStart = (e: any) => {
-    const rect = e.target.getBoundingClientRect();
-    drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
-    return false;
-  }
-
   const handleMouseMove = (e: any) => {
     const {nativeEvent} = e;
     drawingMove(nativeEvent.offsetX, nativeEvent.offsetY);
-  }
-
-  const handleTouchMove = (e: any) => {
-    const rect = e.target.getBoundingClientRect();
-    drawingMove(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
   }
 
   const handleMouseUp = (e: any) => {
     drawingEnd();
   }
 
+  const handleTouchStart = (e: any) => {
+    const touches = e.changedTouches;
+    const rect = e.target.getBoundingClientRect();
+    // drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
+
+    for (let i = 0; i < touches.length; i++) {
+      let touch = touches[i];
+
+      // 저장
+      const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+      drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
+      drObj.identifier = touch.identifier;
+      drList.push(drObj);
+    }
+    return false;
+  }
+
+  const handleTouchMove = (e: any) => {
+    const touches = e.changedTouches;
+    const rect = e.target.getBoundingClientRect();
+
+    for (let i = 0; i < touches.length; i++) {
+      let touch = touches[i];
+      let currentTouchIndex = drList.findIndex(item => item.identifier === touch.identifier);
+
+      if (currentTouchIndex >= 0) {
+        // 저장
+        const currentTouch = drList[currentTouchIndex];
+        currentTouch.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
+
+        // 그리기 현재 포인트와 이전 포인트 사이를 라인으로 그린다.
+        const length = currentTouch.pointList.length;
+        contextRef.current.beginPath();
+        contextRef.current.moveTo(currentTouch.pointList[length - 2].x, currentTouch.pointList[length - 2].y);
+        contextRef.current.lineTo(currentTouch.pointList[length - 1].x, currentTouch.pointList[length - 1].y);
+        contextRef.current.lineWidth = 1;
+        contextRef.current.stroke();
+      } else {
+        console.log('Touch was not found!');
+      }
+    }
+  }
+
   const handleTouchEnd = (e: any) => {
-    drawingEnd();
+    const touches = e.changedTouches;
+    for (let i = 0; i < touches.length; i++) {
+      let touch = touches[i];
+      let currentTouchIndex = drList.findIndex(item => item.identifier === touch.identifier);
+      if (currentTouchIndex >= 0) {
+        // 저장
+        const currentTouch = drList[currentTouchIndex];
+        currentTouch.endTime = new Date().getTime();
+        answer.push(currentTouch);
+        setAnswer(answer);
+        debounceSave();
+        // 삭제
+        drList.splice(currentTouchIndex, 1);
+      }
+    }
   }
 
   return (
