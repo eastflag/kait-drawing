@@ -16,11 +16,10 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
-  const isDrawingRef = useRef<boolean>(false);
 
-  // 현재 그려지는 객체
-  const [drObj, setDrObj] = useState<ShapeVO>(new ShapeVO());
-  // 현재 그려지는 객체 리스트 (멀티 터치 지원)
+  // 싱글 터치: 현재 그려지는 객체
+  let drObj: any = null;
+  // 멀티 터치: 현재 그려지는 객체 리스트 (멀티 터치 지원)
   const drList: ShapeVO[] = [];
 
   useEffect(() => {
@@ -52,33 +51,24 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   }, [answer]);
 
   const drawingStart = (x: number, y: number) => {
-    isDrawingRef.current = true;
-
     // 저장
-    const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+    drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
     drObj.pointList.push(new PointVO(x, y));
-    setDrObj((prevDrObj: ShapeVO) => drObj);
-
-    // 그리기
-    contextRef.current.lineWidth = drObj.thickness;
-    contextRef.current.strokeStyle = drObj.color;
-    contextRef.current.beginPath();
-    contextRef.current.moveTo(x, y);
   }
 
   const drawingMove = (x: number, y: number) => {
-    if (!isDrawingRef.current) {
+    if (!drObj) {
       return;
     }
 
     // 저장
-    setDrObj((prevDrObj: ShapeVO) => {
-      prevDrObj?.pointList.push(new PointVO(x, y));
-      return prevDrObj;
-    });
-
-    // 그리기
-    contextRef.current.lineTo(x, y);
+    drObj.pointList.push(new PointVO(x, y));
+    // 그리기 현재 포인트와 이전 포인트 사이를 라인으로 그린다.
+    const length = drObj.pointList.length;
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(drObj.pointList[length - 2].x, drObj.pointList[length - 2].y);
+    contextRef.current.lineTo(drObj.pointList[length - 1].x, drObj.pointList[length - 1].y);
+    contextRef.current.lineWidth = 1;
     contextRef.current.stroke();
   }
 
@@ -87,17 +77,13 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
 
   const drawingEnd = () => {
     // 저장
-    setDrObj((prevDrObj: ShapeVO) => {
-      // prevDrObj?.pointList.push(new PointVO(x, y));
-      prevDrObj.endTime = new Date().getTime();
-      answer.push(prevDrObj);
-      setAnswer(answer);
-      return prevDrObj;
-    });
+    drObj.endTime = new Date().getTime();
+    answer.push(drObj);
+    setAnswer(answer);
     // 초기화
-    isDrawingRef.current = false;
+    drObj = null;
     // 저장
-    debounceSave();
+    // debounceSave();
   }
 
   const handleMouseDown = (e: any) => {
@@ -116,17 +102,21 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
 
   const handleTouchStart = (e: any) => {
     const touches = e.changedTouches;
+    console.log(touches);
     const rect = e.target.getBoundingClientRect();
     // drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
 
     for (let i = 0; i < touches.length; i++) {
       let touch = touches[i];
 
-      // 저장
-      const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
-      drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
-      drObj.identifier = touch.identifier;
-      drList.push(drObj);
+      // palm rejection
+      if (touch.radiusX < 20) {
+        // 저장
+        const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+        drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
+        drObj.identifier = touch.identifier;
+        drList.push(drObj);
+      }
     }
     return false;
   }
@@ -151,8 +141,6 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
         contextRef.current.lineTo(currentTouch.pointList[length - 1].x, currentTouch.pointList[length - 1].y);
         contextRef.current.lineWidth = 1;
         contextRef.current.stroke();
-      } else {
-        console.log('Touch was not found!');
       }
     }
   }
@@ -168,8 +156,8 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
         currentTouch.endTime = new Date().getTime();
         answer.push(currentTouch);
         setAnswer(answer);
-        debounceSave();
-        // 삭제
+        // debounceSave();
+        // 목록에서 삭제
         drList.splice(currentTouchIndex, 1);
       }
     }
