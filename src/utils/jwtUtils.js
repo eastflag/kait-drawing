@@ -6,6 +6,7 @@ export const jwtUtils = {
       return false;
     }
     const decoded = jwtDecode(currentUser.accessToken);
+    console.log((decoded.exp - new Date().getTime() / 1000) / 60 + '분 남았습니다.');
     // console.log(decoded);
     if (decoded.exp > new Date().getTime() / 1000) {
       return true;

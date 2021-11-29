@@ -49,10 +49,6 @@ const PrivateRoute = (props: any) => {
     return <Redirect to={ROUTES_PATH.Login} />
   }
 
-  // if (!jwtUtils.isAdmin(user)) {
-  //   return <Redirect to={ROUTES_PATH.Root} />
-  // }
-
   const menu = (
     <Menu>
       <Menu.Item key={1} onClick={() => history.push('/profile')}>
