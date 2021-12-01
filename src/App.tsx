@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {Layout, Spin} from "antd";
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
@@ -15,13 +15,18 @@ import {Setting} from "./pages/setting/Setting";
 import { Category } from './pages/category/Category';
 
 const App = () => {
-  const dispatch = useDispatch();
   const loading = useSelector((state: any) => state.Noti.loading);
+
+  const [containerHeight, setContainerHeight] = useState<number|string>(0);
+
+  useEffect(() => {
+    setContainerHeight((window.innerHeight - 1) + 'px');
+  }, [])
 
   return (
     <AuthProvider>
       <Spin spinning={loading} size="large">
-        <Layout style={{height: '100vh'}}>
+        <Layout style={{height: containerHeight}}>
           <Layout.Content>
             <BrowserRouter>
               <Switch>
