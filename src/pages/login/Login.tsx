@@ -119,7 +119,7 @@ const Login: React.FC<Props> = ({history}) =>  {
         dispatch(setUser(user));
       }
 
-      // history.push('/');
+      history.push('/');
     } catch (error: any) {
       message.error(error.message);
     }

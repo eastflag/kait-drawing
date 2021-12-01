@@ -109,7 +109,10 @@ export const Study: React.FC<Props> = ({match}) => {
             ))
           }
         </Space>
-        <Button type="primary" onClick={submitAnswer}>제출</Button>
+        <Space>
+          <Button type="primary" ghost onClick={saveAnswer}>저장</Button>
+          <Button type="primary" onClick={submitAnswer}>제출</Button>
+        </Space>
       </Row>
     </div>
   );
