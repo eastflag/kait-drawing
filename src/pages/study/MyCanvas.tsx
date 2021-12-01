@@ -5,6 +5,7 @@ import {ShapeVO} from "../model/ShapeVO";
 import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
 import _ from "lodash";
+import {message} from "antd";
 
 interface Props {
   answer: any;
@@ -30,7 +31,17 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
     myCanvas.height = document.getElementById('canvas-wrapper')?.clientHeight;
     contextRef.current = myCanvas.getContext("2d");
     contextRef.current.imageSmoothingEnabled = false;
-  }, [])
+
+    window.addEventListener('resize', resizeCanvas);
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+    }
+  }, []);
+
+  const resizeCanvas = () => {
+    canvasRef.current.width = document.getElementById('canvas-wrapper')?.clientWidth;
+    canvasRef.current.height = document.getElementById('canvas-wrapper')?.clientHeight;
+  }
 
   useEffect(() => {
     // 지우기
@@ -101,8 +112,14 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   }
 
   const handleTouchStart = (e: any) => {
+    e.preventDefault();
     const touches = e.changedTouches;
     console.log(touches);
+    // test code start ----------------
+    for (let i = 0; i < touches.length; i++) {
+      message.info(`x[${i}] ` + touches[i].radiusX);
+    }
+    // test code end   ----------------
     const rect = e.target.getBoundingClientRect();
     // drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
 
@@ -122,6 +139,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   }
 
   const handleTouchMove = (e: any) => {
+    e.preventDefault();
     const touches = e.changedTouches;
     const rect = e.target.getBoundingClientRect();
 
@@ -143,9 +161,11 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
         contextRef.current.stroke();
       }
     }
+    return false;
   }
 
   const handleTouchEnd = (e: any) => {
+    e.preventDefault();
     const touches = e.changedTouches;
     for (let i = 0; i < touches.length; i++) {
       let touch = touches[i];
@@ -161,6 +181,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
         drList.splice(currentTouchIndex, 1);
       }
     }
+    return false;
   }
 
   return (

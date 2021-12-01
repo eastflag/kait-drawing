@@ -20,8 +20,17 @@ const App = () => {
   const [containerHeight, setContainerHeight] = useState<number|string>(0);
 
   useEffect(() => {
-    setContainerHeight((window.innerHeight - 1) + 'px');
+    resizeContainerHeight();
+
+    window.addEventListener('resize', resizeContainerHeight);
+    return () => {
+      window.removeEventListener('resize', resizeContainerHeight);
+    }
   }, [])
+
+  const resizeContainerHeight = () => {
+    setContainerHeight((window.innerHeight - 1) + 'px');
+  }
 
   return (
     <AuthProvider>
