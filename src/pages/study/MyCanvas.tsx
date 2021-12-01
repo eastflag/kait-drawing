@@ -5,7 +5,6 @@ import {ShapeVO} from "../model/ShapeVO";
 import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
 import _ from "lodash";
-import {message} from "antd";
 
 interface Props {
   answer: any;
@@ -114,12 +113,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
   const handleTouchStart = (e: any) => {
     e.preventDefault();
     const touches = e.changedTouches;
-    console.log(touches);
-    // test code start ----------------
-    for (let i = 0; i < touches.length; i++) {
-      message.info(`x[${i}] ` + touches[i].radiusX);
-    }
-    // test code end   ----------------
+
     const rect = e.target.getBoundingClientRect();
     // drawingStart(e.targetTouches[0].pageX - rect.left, e.targetTouches[0].pageY - rect.top);
 

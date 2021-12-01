@@ -31,7 +31,6 @@ const PrivateRoute = (props: any) => {
   const user: UserVO = useSelector(({User}: any) => User);
 
   useEffect(() => {
-    console.log(props);
     if (!jwtUtils.isAuth(currentUser)) {
       return;
     }
