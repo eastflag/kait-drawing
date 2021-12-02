@@ -15,7 +15,7 @@ export const jwtUtils = {
     }
   },
   isAdmin: (user) => {
-    // console.log(decoded);
+    console.log(user);
     if (user.accountType === 'teacher') {
       return true;
     } else {

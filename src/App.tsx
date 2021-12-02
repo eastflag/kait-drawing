@@ -1,18 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import {Layout, Spin} from "antd";
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ROUTES_PATH} from "./routes";
-import {Study} from "./pages/study/Study";
-import Login from "./pages/login/Login";
-import SignUp from "./pages/signUp/SignUp";
-import PrivateRoute from "./routes/PrivateRoute";
+import {AuthProvider} from "./Auth";
+import {Admin} from "./pages/admin";
+import {Home} from "./pages/home";
 
 import './App.css';
-import {AuthProvider} from "./Auth";
-import {Daily} from "./pages/daily/Daily";
-import {Setting} from "./pages/setting/Setting";
-import { Category } from './pages/category/Category';
 
 const App = () => {
   const loading = useSelector((state: any) => state.Noti.loading);
@@ -39,15 +34,10 @@ const App = () => {
           <Layout.Content>
             <BrowserRouter>
               <Switch>
-                <PrivateRoute path={ROUTES_PATH.Daily} component={Daily}></PrivateRoute>
-                <PrivateRoute path={ROUTES_PATH.Study} component={Study}></PrivateRoute>
-                <PrivateRoute path={ROUTES_PATH.Category} component={Category}></PrivateRoute>
-                <PrivateRoute path={ROUTES_PATH.Setting} component={Setting}></PrivateRoute>
-                {/*<PrivateRoute exact path={ROUTES_PATH.Profile} component={ModifyProfile}></PrivateRoute>*/}
-                {/*<PrivateRoute exact path={ROUTES_PATH.Password} component={ModifyPassword}></PrivateRoute>*/}
-                <Route path={ROUTES_PATH.Login} component={Login}></Route>
-                <Route path={ROUTES_PATH.SignUp} component={SignUp}></Route>
-                <Redirect path="*" to="/daily" />
+                {/*관리자 사이트*/}
+                <Route path={ROUTES_PATH.Admin} component={Admin}></Route>
+                {/*사용자 사이트*/}
+                <Route path={ROUTES_PATH.Root} component={Home}></Route>
               </Switch>
             </BrowserRouter>
           </Layout.Content>

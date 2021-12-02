@@ -37,6 +37,7 @@ const PrivateRoute = (props: any) => {
   }, []);
 
   const logout = () => {
+    console.log('logout');
     dispatch(setToken(''));
     dispatch(setUser({}));
     history.push('/login');

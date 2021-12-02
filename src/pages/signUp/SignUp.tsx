@@ -51,7 +51,7 @@ const SignUp: React.FC<Props> = ({history}) => {
 
     try {
       const {user} = await createUserWithEmailAndPassword(auth, email, password);
-      // data = {user: {uid: xxx, phoneNumber: xx, photoURL: xx, email: xxx, displayName: xxx}, credential: null, additionalUserInfo: wg, operationType: "signIn"}
+      // data = {home: {uid: xxx, phoneNumber: xx, photoURL: xx, email: xxx, displayName: xxx}, credential: null, additionalUserInfo: wg, operationType: "signIn"}
       console.log(user);
 
       // firestore users에 저장

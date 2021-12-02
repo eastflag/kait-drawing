@@ -18,14 +18,7 @@ const persistor = persistStore(store);
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter>
-        <Switch>
-          {/*관리자 사이트*/}
-          <Route path={ROUTES_PATH.Admin} component={Admin}></Route>
-          {/*사용자 사이트*/}
-          <Route path={ROUTES_PATH.Root} component={App}></Route>
-        </Switch>
-      </BrowserRouter>
+      <App></App>
     </PersistGate>
   </Provider>,
   document.getElementById('root')
