@@ -12,7 +12,6 @@ import {
   SettingOutlined,
   SnippetsOutlined
 } from '@ant-design/icons';
-import {setToken} from "../redux/reducers/AuthReducer";
 import {setUser} from "../redux/reducers/UserReducer";
 import {AuthContext} from "../Auth";
 
@@ -37,9 +36,8 @@ const PrivateRoute = (props: any) => {
   }, []);
 
   const logout = () => {
-    console.log('logout');
-    dispatch(setToken(''));
     dispatch(setUser({}));
+    // todo: 인증 토큰은 currentUser의 accessToken으로 갖고 오기 때문에 파이어베이스 로그아웃
     history.push('/login');
   }
 

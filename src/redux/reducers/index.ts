@@ -1,6 +1,5 @@
 import {persistReducer} from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import {AuthReducer} from "./AuthReducer";
 import {combineReducers} from "redux";
 import {UserReducer} from "./UserReducer";
 import {NotiReducer} from "./NotiReducer";
@@ -16,7 +15,6 @@ const persistConfig = {
 
 const allReducers = combineReducers({
   User: UserReducer,
-  Auth: AuthReducer,
   Noti: NotiReducer,
 });
 

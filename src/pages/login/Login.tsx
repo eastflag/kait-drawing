@@ -5,10 +5,7 @@ import {Link} from "react-router-dom";
 import {ROUTES_PATH} from "../../routes";
 import {useDispatch} from "react-redux";
 import {auth, firestore} from "../../firebase";
-import api from "../../utils/api";
 import {setUser} from "../../redux/reducers/UserReducer";
-import {jwtUtils} from "../../utils/jwtUtils";
-import {setToken} from "../../redux/reducers/AuthReducer";
 import {setLoading} from "../../redux/reducers/NotiReducer";
 import { getRedirectResult, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { GoogleAuthProvider } from "firebase/auth";
@@ -89,6 +86,7 @@ const Login: React.FC<Props> = ({history}) =>  {
         user = { ...user,  ...docSnap.data() }
       }
 
+      // 사용자 정보를 DB에 저장하고 그 정보를 User에 설정한다.
       dispatch(setUser(user));
 
       history.push('/');
@@ -117,9 +115,10 @@ const Login: React.FC<Props> = ({history}) =>  {
           ...docSnap.data()
         }
         dispatch(setUser(user));
+        history.push('/');
+      } else {
+        // 에러가 있다면 catch문에서 처리된다.
       }
-
-      history.push('/');
     } catch (error: any) {
       message.error(error.message);
     }
