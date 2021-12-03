@@ -5,6 +5,7 @@ import {ShapeVO} from "../model/ShapeVO";
 import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
 import _ from "lodash";
+import {message} from "antd";
 
 interface Props {
   answer: any;
@@ -121,7 +122,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
       let touch = touches[i];
 
       // palm rejection
-      if (touch.radiusX < 20) {
+      if (touch.radiusX < 0.01) {
         // 저장
         const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
         drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
