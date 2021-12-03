@@ -4,14 +4,11 @@ import {persistStore} from "redux-persist";
 import {store} from "./redux/store";
 import {Provider} from "react-redux";
 import {PersistGate} from "redux-persist/integration/react";
-import {BrowserRouter, Route, Switch} from "react-router-dom";
-import {ROUTES_PATH} from "./routes";
 import App from './App';
 
 import './index.scss';
 
 import reportWebVitals from './reportWebVitals';
-import { Admin } from './pages/admin';
 
 const persistor = persistStore(store);
 

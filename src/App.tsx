@@ -4,7 +4,7 @@ import {Layout, Spin} from "antd";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {ROUTES_PATH} from "./routes";
 import {AuthProvider} from "./Auth";
-import {Admin} from "./pages/admin";
+import {AdminIndex} from "./pages/admin";
 import {Home} from "./pages/home";
 
 import './App.css';
@@ -35,7 +35,7 @@ const App = () => {
             <BrowserRouter>
               <Switch>
                 {/*관리자 사이트*/}
-                <Route path={ROUTES_PATH.Admin} component={Admin}></Route>
+                <Route path={ROUTES_PATH.Admin} component={AdminIndex}></Route>
                 {/*사용자 사이트*/}
                 <Route path={ROUTES_PATH.Root} component={Home}></Route>
               </Switch>
