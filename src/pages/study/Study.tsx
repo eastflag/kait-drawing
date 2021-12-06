@@ -64,12 +64,13 @@ export const Study: React.FC<Props> = ({match}) => {
   const getAnswer = async (index: number) => {
     const ref = doc(firestore, `/users/${user.uid}/user_questions/${questions[index].id}`);
     const docSnap = await getDoc(ref);
-    if (docSnap.exists() && docSnap.data().answer) {
+    if (docSnap.exists()) {
       console.log(docSnap.data().answer, docSnap.id);
       setAnswer(docSnap.data().answer);
       setSubmit(!!docSnap.data().submit);
     } else {
       setAnswer([]);
+      setSubmit(false)
     }
   }
 
