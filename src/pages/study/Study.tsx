@@ -1,4 +1,4 @@
-import {Button, Row, Space} from "antd";
+import {Button, message, Popconfirm, Row, Space} from "antd";
 import {MyCanvas} from "./MyCanvas";
 import React, {useCallback, useEffect, useState} from "react";
 import {collection, doc, getDoc, getDocs, query, setDoc, where} from "firebase/firestore";
@@ -25,6 +25,7 @@ export const Study: React.FC<Props> = ({match}) => {
   const [currentQuestion, setCurrentQuestion] = useState<QuestionVO>({});
   // 학생이 캔버스에 그리는 모든 드로잉 객체
   const [answer, setAnswer] = useState([]);
+  const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
     console.log(match.params);
@@ -38,7 +39,7 @@ export const Study: React.FC<Props> = ({match}) => {
     setCurrentQuestion(questions[currentPage - 1]);
 
     // 사용자 drawing 정보를 가져온다.
-    // /users/user_id/questions/questions_id/{answer, teacher_answer}
+    // /users/user_id/user_questions/questions_id/{answer, teacher_answer}
     getAnswer(currentPage - 1);
   }, [currentPage]);
 
@@ -61,29 +62,32 @@ export const Study: React.FC<Props> = ({match}) => {
   }, []);
 
   const getAnswer = async (index: number) => {
-    const ref = doc(firestore, `/users/${user.uid}/questions/${questions[index].id}`);
+    const ref = doc(firestore, `/users/${user.uid}/user_questions/${questions[index].id}`);
     const docSnap = await getDoc(ref);
     if (docSnap.exists() && docSnap.data().answer) {
       console.log(docSnap.data().answer, docSnap.id);
       setAnswer(docSnap.data().answer);
+      setSubmit(!!docSnap.data().submit);
     } else {
       setAnswer([]);
     }
   }
 
   const saveAnswer = async () => {
-    const ref = doc(firestore, `/users/${user.uid}/questions/${questions[currentPage - 1].id}`);
+    const ref = doc(firestore, `/users/${user.uid}/user_questions/${questions[currentPage - 1].id}`);
     await setDoc(ref, {
       answer: answer.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))}))
     }, {merge: true});
+    message.info('저장하였습니다.');
   }
 
   const submitAnswer = async () => {
-    const ref = doc(firestore, `/users/${user.uid}/questions/${questions[currentPage - 1].id}`);
+    const ref = doc(firestore, `/users/${user.uid}/user_questions/${questions[currentPage - 1].id}`);
     await setDoc(ref, {
       answer: answer.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))})),
       submit: true
     }, {merge: true});
+    message.info('제출하였습니다.');
   }
 
   return (
@@ -93,7 +97,7 @@ export const Study: React.FC<Props> = ({match}) => {
         <div>{currentQuestion?.grade} - {currentQuestion.chapter}</div>
       </Row>
       <div className={styles.body}>
-        <MyCanvas answer={answer} setAnswer={setAnswer} saveAnswer={saveAnswer}></MyCanvas>
+        <MyCanvas answer={answer} setAnswer={setAnswer} submit={submit} saveAnswer={saveAnswer}></MyCanvas>
         <div className={styles.question}>
           {
             currentQuestion && <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
@@ -110,8 +114,16 @@ export const Study: React.FC<Props> = ({match}) => {
           }
         </Space>
         <Space>
-          <Button type="primary" ghost onClick={saveAnswer}>저장</Button>
-          <Button type="primary" onClick={submitAnswer}>제출</Button>
+          <Button type="primary" ghost onClick={saveAnswer} disabled={submit}>저장</Button>
+          <Popconfirm
+            title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
+            onConfirm={submitAnswer}
+            okText="Yes"
+            cancelText="No"
+            disabled={submit}
+          >
+            <Button type="primary" disabled={submit}>제출</Button>
+          </Popconfirm>
         </Space>
       </Row>
     </div>

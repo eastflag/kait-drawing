@@ -6,14 +6,16 @@ import {ShapeType} from "../model/ShapeType";
 import {PointVO} from "../model/PointVO";
 import _ from "lodash";
 import {message} from "antd";
+import classNames from "classnames";
 
 interface Props {
   answer: any;
   setAnswer: any;
+  submit: boolean;
   saveAnswer: any;
 }
 
-export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
+export const MyCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAnswer}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -181,10 +183,10 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, saveAnswer}) => {
 
   return (
     <div className={styles['canvas-wrapper']} ref={wrapperRef} id="canvas-wrapper">
-      <canvas className={styles.canvas} ref={canvasRef} id="canvas"
+      <canvas className={classNames(styles.canvas, {[styles.disabled]: submit})} ref={canvasRef} id="canvas"
         onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
         onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}
-        style={{touchAction: 'none'}}></canvas>
+      ></canvas>
     </div>
   );
 }
