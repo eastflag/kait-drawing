@@ -12,6 +12,7 @@ import {setUser} from "../../redux/reducers/UserReducer";
 import {signOut} from "firebase/auth";
 import {auth} from "../../firebase";
 import Student from "./student/Student";
+import Grade from "./grade/Grade";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
@@ -75,6 +76,7 @@ export const AdminIndex = ({history, location}: any) => {
         <BrowserRouter>
           <Switch>
             <Route path={ROUTES_PATH.AdminStudent} component={Student}></Route>
+            <Route path={ROUTES_PATH.AdminGrade} component={Grade}></Route>
           </Switch>
         </BrowserRouter>
       </Content>
