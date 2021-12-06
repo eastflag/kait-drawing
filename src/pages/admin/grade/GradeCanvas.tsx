@@ -7,15 +7,14 @@ import {PointVO} from "../../model/PointVO";
 import _ from "lodash";
 import {message} from "antd";
 import classNames from "classnames";
+import {UserQuestionVO} from "../../model/UserQuestionVO";
 
 interface Props {
-  answer: any;
-  setAnswer: any;
-  submit: boolean;
-  saveAnswer: any;
+  userQuestion: UserQuestionVO;
 }
 
-export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAnswer}) => {
+export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
+  const marksRef = useRef<any>([]);
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -35,6 +34,8 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
     contextRef.current.imageSmoothingEnabled = false;
 
     window.addEventListener('resize', resizeCanvas);
+
+    init();
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     }
@@ -45,11 +46,11 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
     canvasRef.current.height = document.getElementById('canvas-wrapper')?.clientHeight;
   }
 
-  useEffect(() => {
-    // 지우기
+  const init = () => {
+    // 학생 답변 그리기
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    answer.forEach((item: ShapeVO) => {
+    userQuestion.answer?.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
@@ -61,11 +62,12 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
         }
       }
     });
-  }, [answer]);
+
+  };
 
   const drawingStart = (x: number, y: number) => {
     // 저장
-    drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+    drObj = new ShapeVO(new Date().getTime(), 1, '#ff0000', ShapeType.POINT);
     drObj.pointList.push(new PointVO(x, y));
   }
 
@@ -85,14 +87,10 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
     contextRef.current.stroke();
   }
 
-  // todo: debounce가 제대로 적용되지 않는다.
-  const debounceSave = _.debounce(saveAnswer, 3000);
-
   const drawingEnd = () => {
     // 저장
     drObj.endTime = new Date().getTime();
-    answer.push(drObj);
-    setAnswer(answer);
+    userQuestion.marks?.push(drObj);
     // 초기화
     drObj = null;
     // 저장
@@ -171,10 +169,7 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
         // 저장
         const currentTouch = drList[currentTouchIndex];
         currentTouch.endTime = new Date().getTime();
-        answer.push(currentTouch);
-        setAnswer(answer);
-        // debounceSave();
-        // 목록에서 삭제
+        userQuestion.marks.push(currentTouch);
         drList.splice(currentTouchIndex, 1);
       }
     }
@@ -183,7 +178,7 @@ export const GradeCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAns
 
   return (
     <div className={styles['canvas-wrapper']} ref={wrapperRef} id="canvas-wrapper">
-      <canvas className={classNames(styles.canvas, {[styles.disabled]: submit})} ref={canvasRef} id="canvas"
+      <canvas className={classNames(styles.canvas)} ref={canvasRef} id="grade_canvas"
         onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove}
         onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}
       ></canvas>

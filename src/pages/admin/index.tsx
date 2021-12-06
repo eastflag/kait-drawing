@@ -6,13 +6,21 @@ import React, {useContext} from "react";
 import {AuthContext} from "../../Auth";
 import {UserVO} from "../model/UserVO";
 import {useDispatch, useSelector} from "react-redux";
-import styles from "../../routes/PrivateRoute.module.scss";
-import {HomeTwoTone, LeftOutlined, MenuOutlined} from "@ant-design/icons";
+import {
+  HomeTwoTone,
+  LeftOutlined,
+  MenuOutlined,
+  ScheduleOutlined,
+  SettingOutlined,
+  SnippetsOutlined
+} from "@ant-design/icons";
 import {setUser} from "../../redux/reducers/UserReducer";
 import {signOut} from "firebase/auth";
 import {auth} from "../../firebase";
 import Student from "./student/Student";
 import Grade from "./grade/Grade";
+
+import styles from "./AdminIndex.module.scss";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
@@ -58,7 +66,7 @@ export const AdminIndex = ({history, location}: any) => {
   );
 
   return (
-    <Layout>
+    <Layout className={styles.container}>
       <Header className={styles.header}>
         {/*left*/}
         {
@@ -72,7 +80,8 @@ export const AdminIndex = ({history, location}: any) => {
           <MenuOutlined />
         </Dropdown>
       </Header>
-      <Content>
+
+      <Content className={styles.body}>
         <BrowserRouter>
           <Switch>
             <Route path={ROUTES_PATH.AdminStudent} component={Student}></Route>
@@ -80,6 +89,21 @@ export const AdminIndex = ({history, location}: any) => {
           </Switch>
         </BrowserRouter>
       </Content>
+
+      <Footer className={styles.footer}>
+        <div className={styles.box} onClick={() => history.push('/daily')}>
+          <ScheduleOutlined className={styles.icon} />
+          <span className={styles.text}>일별</span>
+        </div>
+        <div className={styles.box} onClick={() => history.push('/category')}>
+          <SnippetsOutlined className={styles.icon} />
+          <span className={styles.text}>카테고리</span>
+        </div>
+        <div className={styles.box} onClick={() => history.push('/setting')}>
+          <SettingOutlined className={styles.icon} />
+          <span className={styles.text}>설정</span>
+        </div>
+      </Footer>
     </Layout>
   );
 }

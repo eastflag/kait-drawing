@@ -1,11 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import styles from "../../study/Study.module.scss";
 import {Button, Popconfirm, Row, Space} from "antd";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../../firebase";
 import {QuestionVO} from "../../model/QuestionVO";
 import {UserVO} from "../../model/UserVO";
 import {useSelector} from "react-redux";
+import {GradeCanvas} from "./GradeCanvas";
+
+import styles from "./Grade.module.scss";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -44,7 +46,7 @@ const Grade = ({match}: any) => {
         <div>{question?.grade} - {question.chapter}</div>
       </Row>
       <div className={styles.body}>
-        {/*<GradeCanvas answer={answer} setAnswer={setAnswer} submit={submit} saveAnswer={saveAnswer}></GradeCanvas>*/}
+        <GradeCanvas userQuestion={userQuestion}></GradeCanvas>
         <div className={styles.question}>
           {
             question && <Latex displayMode={true}>{`\$\$${question?.content}\$\$`}</Latex>
