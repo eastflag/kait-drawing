@@ -82,6 +82,8 @@ export const Study: React.FC<Props> = ({match}) => {
     } else {
       setAnswer([]);
       setSubmit(false)
+      setMarks([]);
+      setScore(0);
     }
   }
 
@@ -115,9 +117,12 @@ export const Study: React.FC<Props> = ({match}) => {
             currentQuestion && <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
           }
         </div>
-        <div className={styles.score}>
-          {score} / 10
-        </div>
+        {
+          score > 0 &&
+            <div className={styles.score}>
+              {score} / 10
+            </div>
+        }
       </div>
       <Row className={styles.footer} align="middle" justify="space-between">
         <Space align="center" >
