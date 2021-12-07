@@ -34,8 +34,6 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
     contextRef.current.imageSmoothingEnabled = false;
 
     window.addEventListener('resize', resizeCanvas);
-
-    init();
     return () => {
       window.removeEventListener('resize', resizeCanvas);
     }
@@ -46,10 +44,13 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
     canvasRef.current.height = document.getElementById('canvas-wrapper')?.clientHeight;
   }
 
-  const init = () => {
-    // 학생 답변 그리기
-    contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  useEffect(() => {
+    if (!userQuestion) {
+      return;
+    }
 
+    contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    // 학생 답변 그리기
     userQuestion.answer?.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
@@ -62,7 +63,20 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         }
       }
     });
-  };
+    // 선생님 채점 그리기
+    userQuestion.marks?.forEach((item: ShapeVO) => {
+      if (item.pointList.length >= 2) {
+        for (let i = 1; i < item.pointList.length; ++i) {
+          contextRef.current.beginPath();
+          contextRef.current.lineWidth = item.thickness;
+          contextRef.current.strokeStyle = item.color;
+          contextRef.current.moveTo(item.pointList[i-1].x, item.pointList[i-1].y);
+          contextRef.current.lineTo(item.pointList[i].x, item.pointList[i].y);
+          contextRef.current.stroke();
+        }
+      }
+    });
+  }, [userQuestion]);
 
   const drawingStart = (x: number, y: number) => {
     // 저장
@@ -82,7 +96,8 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
     contextRef.current.beginPath();
     contextRef.current.moveTo(drObj.pointList[length - 2].x, drObj.pointList[length - 2].y);
     contextRef.current.lineTo(drObj.pointList[length - 1].x, drObj.pointList[length - 1].y);
-    contextRef.current.lineWidth = 1;
+    contextRef.current.lineWidth = drObj.lineWidth;
+    contextRef.current.strokeStyle = drObj.color;
     contextRef.current.stroke();
   }
 
@@ -123,7 +138,7 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
       // palm rejection
       if (touch.radiusX < 0.01) {
         // 저장
-        const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+        const drObj = new ShapeVO(new Date().getTime(), 1, '#ff0000', ShapeType.POINT);
         drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
         drObj.identifier = touch.identifier;
         drList.push(drObj);
@@ -151,7 +166,8 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         contextRef.current.beginPath();
         contextRef.current.moveTo(currentTouch.pointList[length - 2].x, currentTouch.pointList[length - 2].y);
         contextRef.current.lineTo(currentTouch.pointList[length - 1].x, currentTouch.pointList[length - 1].y);
-        contextRef.current.lineWidth = 1;
+        contextRef.current.lineWidth = drObj.lineWidth;
+        contextRef.current.strokeStyle = drObj.color;
         contextRef.current.stroke();
       }
     }
