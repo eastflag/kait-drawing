@@ -25,7 +25,12 @@ export const Study: React.FC<Props> = ({match}) => {
   const [currentQuestion, setCurrentQuestion] = useState<QuestionVO>({});
   // 학생이 캔버스에 그리는 모든 드로잉 객체
   const [answer, setAnswer] = useState([]);
+  // 학생이 그린 드로잉 제출 여부
   const [submit, setSubmit] = useState(false);
+  // 선생님이 그린 드로잉 객체
+  const [marks, setMarks] = useState([]);
+  // 채점 점수
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     console.log(match.params);
@@ -68,6 +73,12 @@ export const Study: React.FC<Props> = ({match}) => {
       console.log(docSnap.data().answer, docSnap.id);
       setAnswer(docSnap.data().answer);
       setSubmit(!!docSnap.data().submit);
+      if (docSnap.data().marks) {
+        setMarks(docSnap.data().marks);
+      }
+      if (docSnap.data().score) {
+        setScore(docSnap.data().score);
+      }
     } else {
       setAnswer([]);
       setSubmit(false)
@@ -98,11 +109,14 @@ export const Study: React.FC<Props> = ({match}) => {
         <div>{currentQuestion?.grade} - {currentQuestion.chapter}</div>
       </Row>
       <div className={styles.body}>
-        <MyCanvas answer={answer} setAnswer={setAnswer} submit={submit} saveAnswer={saveAnswer}></MyCanvas>
+        <MyCanvas answer={answer} setAnswer={setAnswer} marks={marks} submit={submit} saveAnswer={saveAnswer}></MyCanvas>
         <div className={styles.question}>
           {
             currentQuestion && <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
           }
+        </div>
+        <div className={styles.score}>
+          {score} / 10
         </div>
       </div>
       <Row className={styles.footer} align="middle" justify="space-between">

@@ -27,6 +27,13 @@
     top: 0;
     width: 100%;
   }
+  .score {
+    position: absolute;
+    z-index: 2;
+    right: 5px;
+    top: 0;
+    color: red;
+  }
 }
 .footer{
   height: 2.4rem;

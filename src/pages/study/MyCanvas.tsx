@@ -11,11 +11,12 @@ import classNames from "classnames";
 interface Props {
   answer: any;
   setAnswer: any;
+  marks: any;
   submit: boolean;
   saveAnswer: any;
 }
 
-export const MyCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAnswer}) => {
+export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, saveAnswer}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -62,6 +63,21 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, submit, saveAnswer
       }
     });
   }, [answer]);
+
+  useEffect(() => {
+    marks.forEach((item: ShapeVO) => {
+      if (item.pointList.length >= 2) {
+        for (let i = 1; i < item.pointList.length; ++i) {
+          contextRef.current.beginPath();
+          contextRef.current.lineWidth = item.thickness;
+          contextRef.current.strokeStyle = item.color;
+          contextRef.current.moveTo(item.pointList[i-1].x, item.pointList[i-1].y);
+          contextRef.current.lineTo(item.pointList[i].x, item.pointList[i].y);
+          contextRef.current.stroke();
+        }
+      }
+    });
+  }, [marks])
 
   const drawingStart = (x: number, y: number) => {
     // 저장
