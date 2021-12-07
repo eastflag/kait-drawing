@@ -62,7 +62,6 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         }
       }
     });
-
   };
 
   const drawingStart = (x: number, y: number) => {

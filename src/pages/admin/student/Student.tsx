@@ -13,18 +13,18 @@ const Student = ({history}: any) => {
   const columns = [
     {
       title: '목록',
-      dataIndex: 'id',
+      dataIndex: 'question_id',
       editable: false,
-      key: 'id',
+      key: 'question_id',
     },
     {
       title: '',
       dataIndex: 'id',
       key: 'edit',
-      render: (id: any) => (
+      render: (text: any, record: any) => (
         <Row justify="end">
           <Button onClick={() => {
-            history.push(`/admin/grade/${id}`);
+            history.push(`/admin/grade/${record.user_id}/${record.question_id}`);
           }}>채점</Button>
         </Row>
       )
@@ -39,8 +39,8 @@ const Student = ({history}: any) => {
     let tempQuestions: any = [];
     // todo: 컬렉션 부모의 다큐먼트 조회가 필요
     querySnapshot.forEach((doc) => {
-      console.log(doc.data(), ' ', doc.ref.parent.parent);
-      tempQuestions.push({id: doc.id, ...doc.data()});
+      console.log('question_id: ', doc.id, '  user_id: ', doc.ref.parent.parent?.id);
+      tempQuestions.push({question_id: doc.id, user_id: doc.ref.parent.parent?.id, ...doc.data()});
     });
     setUserQuestions(tempQuestions);
   }

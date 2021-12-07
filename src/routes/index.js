@@ -1,7 +1,7 @@
 export const ROUTES_PATH = {
   Admin: "/admin",
   AdminStudent: '/admin/student',
-  AdminGrade: '/admin/grade/:id',
+  AdminGrade: '/admin/grade/:user_id/:question_id',
   Root: "/",
   Study: "/study/:date",
   Daily: "/daily",

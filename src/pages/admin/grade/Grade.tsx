@@ -18,22 +18,24 @@ const Grade = ({match}: any) => {
   const [userQuestion, setUserQuestion] = useState({});
 
   useEffect(() => {
-    console.log(match.params);
     init();
   }, []);
 
   const init = useCallback(async () => {
     // match.params.id: question_id 정보를 가져온다.
     // question 정보를 가져온다.
-    const question_id = match.params.id;
+    const user_id = match.params.user_id;
+    const question_id = match.params.question_id;
     const questionRef = doc(firestore, 'questions', question_id);
     let docSnap = await getDoc(questionRef);
     if (docSnap.exists()) {
       setQuestion({id: docSnap.id, ...docSnap.data()});
     }
     // user의 question 정보를가져온다.
-    const userQuestionRef = doc(firestore, `/users/${user.uid}/user_questions`, question_id);
+    console.log(`users/${user.uid}/user_questions`);
+    const userQuestionRef = doc(firestore, `users/${user_id}/user_questions`, question_id);
     docSnap = await getDoc(userQuestionRef);
+    console.log(docSnap.data());
     if (docSnap.exists()) {
       setUserQuestion({id: docSnap.id, ...docSnap.data()});
     }
