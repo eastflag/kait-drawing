@@ -75,9 +75,13 @@ export const Study: React.FC<Props> = ({match}) => {
       setSubmit(!!docSnap.data().submit);
       if (docSnap.data().marks) {
         setMarks(docSnap.data().marks);
+      } else {
+        setMarks([]);
       }
       if (docSnap.data().score) {
         setScore(docSnap.data().score);
+      } else {
+        setScore(0);
       }
     } else {
       setAnswer([]);
