@@ -35,7 +35,7 @@ export const AdminIndex = ({history, location}: any) => {
   }
 
   if (!jwtUtils.isAdmin(user)) {
-    return <Redirect to={ROUTES_PATH.Root} />
+    return <Redirect to={ROUTES_PATH.User} />
   }
 
   const logout = () => {

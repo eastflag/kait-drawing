@@ -10,6 +10,7 @@ import {setLoading} from "../../redux/reducers/NotiReducer";
 import { getRedirectResult, signInWithEmailAndPassword, signInWithRedirect } from 'firebase/auth';
 import { GoogleAuthProvider } from "firebase/auth";
 import {doc, getDoc, setDoc} from "firebase/firestore";
+import {jwtUtils} from "../../utils/jwtUtils";
 
 const {Title} = Typography;
 
@@ -115,7 +116,12 @@ const Login: React.FC<Props> = ({history}) =>  {
           ...docSnap.data()
         }
         dispatch(setUser(user));
-        history.push('/');
+
+        if (jwtUtils.isAdmin(user)) {
+          history.push('/admin/student');
+        } else {
+          history.push('/');
+        }
       } else {
         // 에러가 있다면 catch문에서 처리된다.
       }
