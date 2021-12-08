@@ -82,12 +82,8 @@ export const AdminIndex = ({history, location}: any) => {
       </Header>
 
       <Content className={styles.body}>
-        <BrowserRouter>
-          <Switch>
-            <Route path={ROUTES_PATH.AdminStudent} component={Student}></Route>
-            <Route path={ROUTES_PATH.AdminGrade} component={Grade}></Route>
-          </Switch>
-        </BrowserRouter>
+        <Route path={ROUTES_PATH.AdminStudent} component={Student}></Route>
+        <Route path={ROUTES_PATH.AdminGrade} component={Grade}></Route>
       </Content>
 
       <Footer className={styles.footer}>
