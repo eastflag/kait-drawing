@@ -4,37 +4,42 @@ import React, {useCallback, useEffect, useState} from "react";
 import {collection, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
+import {AssessmentVO} from "../model/AssessmentVO";
 
 interface Props {
   history: any;
 }
 
 export const Daily: React.FC<Props> = ({history}) => {
+  const [assessments, setAssessments] = useState<AssessmentVO[]>([]);
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
 
   useEffect(() => {
-    init();
+    getAssessments();
   }, []);
 
-  const init = useCallback(async () => {
+  const getAssessments = useCallback(async () => {
+    // todo: user 정보를 매핑해서 Badge 상태를 표시.
+    // todo: 달력 월별 이동시 새로운 상태 가져오기
     // 오늘 날짜의 모든 문제 리스트를 가져온다.
     const todayMonth = moment().format('YYYY-MM-');
-    const q = query(collection(firestore, "questions"), where("date", ">=", todayMonth + '01'), where("date", "<=", todayMonth + '31'));
+    const q = query(collection(firestore, "assessments"), where("date", ">=", todayMonth + '01'), where("date", "<=", todayMonth + '31'));
     const querySnapshot = await getDocs(q);
-    const tempQuestions: any = [];
+    const tempAssessments: any = [];
     querySnapshot.forEach((doc) => {
       // data(), id로 다큐먼트 필드, id 조회
-      tempQuestions.push({id: doc.id, ...doc.data()});
+      tempAssessments.push({id: doc.id, ...doc.data()});
     });
-    setQuestions(tempQuestions);
+    setAssessments(tempAssessments);
   }, []);
 
   const dateCellRender = (value: any) => {
-    const listData = questions.filter(item => item.date === value.format('YYYY-MM-DD'));
+    // none: warning, processing: processing, submit: success, done: error
+    const listData = assessments.filter(item => item.date === value.format('YYYY-MM-DD'));
     return <ul className="events">
-      {listData.map((item: QuestionVO) => (
-        <li key={item.id}>
-          <Badge status="processing" text={item.chapter} />
+      {listData.map((item: AssessmentVO) => (
+        <li key={item.id} onClick={() => history.push(`/user/study/${item.id}`)}>
+          <Badge status="default" text={item.grade} />
         </li>
       ))}
     </ul>
@@ -48,5 +53,5 @@ export const Daily: React.FC<Props> = ({history}) => {
     }
   }
 
-  return <Calendar dateCellRender={dateCellRender} onSelect={onSelect}/>
+  return <Calendar dateCellRender={dateCellRender} /*onSelect={onSelect}*//>
 }

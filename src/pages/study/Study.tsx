@@ -49,10 +49,9 @@ export const Study: React.FC<Props> = ({match}) => {
   }, [currentPage]);
 
   const init = useCallback(async () => {
-    // match.params.date 문제 리스트를 가져온다.
-    const today = match.params.date;
-    const q = query(collection(firestore, "questions"), where("date", "==", today));
-    const querySnapshot = await getDocs(q);
+    // match.params.id assessment 의 문제 리스트를 가져온다.
+    const assessment_id = match.params.id;
+    const querySnapshot = await getDocs(collection(firestore, `assessments/${assessment_id}/questions`));
     const tempQuestions: any = [];
     querySnapshot.forEach((doc) => {
       // data(), id로 다큐먼트 필드, id 조회
