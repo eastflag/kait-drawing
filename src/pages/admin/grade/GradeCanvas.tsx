@@ -10,10 +10,11 @@ import classNames from "classnames";
 import {UserQuestionVO} from "../../model/UserQuestionVO";
 
 interface Props {
-  userQuestion: UserQuestionVO;
+  answers: any;
+  marks: any;
 }
 
-export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
+export const GradeCanvas: React.FC<Props> = ({answers, marks}) => {
   const marksRef = useRef<any>([]);
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
@@ -45,13 +46,10 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
   }
 
   useEffect(() => {
-    if (!userQuestion) {
-      return;
-    }
-
+    // 지우기
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     // 학생 답변 그리기
-    userQuestion.answers?.forEach((item: ShapeVO) => {
+    answers.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
@@ -63,8 +61,11 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         }
       }
     });
+  }, [answers]);
+
+  useEffect(() => {
     // 선생님 채점 그리기
-    userQuestion.marks?.forEach((item: ShapeVO) => {
+    marks.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
@@ -76,7 +77,7 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         }
       }
     });
-  }, [userQuestion]);
+  }, [marks])
 
   const drawingStart = (x: number, y: number) => {
     // 저장
@@ -104,7 +105,7 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
   const drawingEnd = () => {
     // 저장
     drObj.endTime = new Date().getTime();
-    userQuestion.marks?.push(drObj);
+    marks?.push(drObj);
     // 초기화
     drObj = null;
     // 저장
@@ -184,7 +185,7 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
         // 저장
         const currentTouch = drList[currentTouchIndex];
         currentTouch.endTime = new Date().getTime();
-        userQuestion.marks.push(currentTouch);
+        marks.push(currentTouch);
         drList.splice(currentTouchIndex, 1);
       }
     }

@@ -57,7 +57,7 @@ export const Study: React.FC<Props> = ({match}) => {
     const assessmentSnap = await getDoc(doc(firestore, 'assessments', assessment_id));
     setAssessment({id: assessmentSnap.id, ...assessmentSnap.data()});
     // UserAssessment: status 가져오기
-    const userAssessmentRef = await getDoc(doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}`));
+    const userAssessmentRef = await getDoc(doc(firestore, `/users/${user.uid}/user_assessments/${assessment_id}`));
     if (userAssessmentRef.exists()) {
       setStatus(userAssessmentRef.data().status);
     }
@@ -109,7 +109,7 @@ export const Study: React.FC<Props> = ({match}) => {
     message.info('저장하였습니다.');
   }
 
-  const submitAnswers = async () => {
+  const submitAssessment = async () => {
     const userAssessmentRef = doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}`);
     await setDoc(userAssessmentRef, {
       assessment: assessment,
@@ -154,7 +154,7 @@ export const Study: React.FC<Props> = ({match}) => {
                   disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>저장</Button>
           <Popconfirm
             title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
-            onConfirm={submitAnswers}
+            onConfirm={submitAssessment}
             okText="Yes"
             cancelText="No"
             disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}

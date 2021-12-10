@@ -87,13 +87,13 @@ export const AdminIndex = ({history, location}: any) => {
       </Content>
 
       <Footer className={styles.footer}>
-        <div className={styles.box} onClick={() => history.push('/daily')}>
+        <div className={styles.box} onClick={() => history.push('/admin/register')}>
           <ScheduleOutlined className={styles.icon} />
-          <span className={styles.text}>일별</span>
+          <span className={styles.text}>문제등록</span>
         </div>
-        <div className={styles.box} onClick={() => history.push('/category')}>
+        <div className={styles.box} onClick={() => history.push('/admin/student')}>
           <SnippetsOutlined className={styles.icon} />
-          <span className={styles.text}>카테고리</span>
+          <span className={styles.text}>채점</span>
         </div>
         <div className={styles.box} onClick={() => history.push('/setting')}>
           <SettingOutlined className={styles.icon} />
