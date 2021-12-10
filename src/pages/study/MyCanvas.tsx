@@ -9,14 +9,14 @@ import {message} from "antd";
 import classNames from "classnames";
 
 interface Props {
-  answer: any;
-  setAnswer: any;
+  answers: any;
+  setAnswers: any;
   marks: any;
   submit: boolean;
-  saveAnswer: any;
+  saveAnswers: any;
 }
 
-export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, saveAnswer}) => {
+export const MyCanvas: React.FC<Props> = ({answers, setAnswers, marks, submit, saveAnswers}) => {
   const wrapperRef = useRef<any>();
   const canvasRef = useRef<any>();
   const contextRef = useRef<any>();
@@ -50,7 +50,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, sav
     // 지우기
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-    answer.forEach((item: ShapeVO) => {
+    answers.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
@@ -62,7 +62,7 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, sav
         }
       }
     });
-  }, [answer]);
+  }, [answers]);
 
   useEffect(() => {
     marks.forEach((item: ShapeVO) => {
@@ -102,13 +102,13 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, sav
   }
 
   // todo: debounce가 제대로 적용되지 않는다.
-  const debounceSave = _.debounce(saveAnswer, 3000);
+  const debounceSave = _.debounce(saveAnswers, 3000);
 
   const drawingEnd = () => {
     // 저장
     drObj.endTime = new Date().getTime();
-    answer.push(drObj);
-    setAnswer(answer);
+    answers.push(drObj);
+    setAnswers(answers);
     // 초기화
     drObj = null;
     // 저장
@@ -187,8 +187,8 @@ export const MyCanvas: React.FC<Props> = ({answer, setAnswer, marks, submit, sav
         // 저장
         const currentTouch = drList[currentTouchIndex];
         currentTouch.endTime = new Date().getTime();
-        answer.push(currentTouch);
-        setAnswer(answer);
+        answers.push(currentTouch);
+        setAnswers(answers);
         // debounceSave();
         // 목록에서 삭제
         drList.splice(currentTouchIndex, 1);

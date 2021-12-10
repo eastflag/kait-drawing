@@ -51,7 +51,7 @@ export const GradeCanvas: React.FC<Props> = ({userQuestion}) => {
 
     contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     // 학생 답변 그리기
-    userQuestion.answer?.forEach((item: ShapeVO) => {
+    userQuestion.answers?.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
         for (let i = 1; i < item.pointList.length; ++i) {
           contextRef.current.beginPath();
