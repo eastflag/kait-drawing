@@ -1,7 +1,10 @@
 export const ROUTES_PATH = {
   Admin: "/admin",
-  AdminStudent: '/admin/student',
+  AdminMark: '/admin/mark',
   AdminGrade: '/admin/grade/:user_id/:assessment_id',
+  AdminQuestion: '/admin/question',
+  AdminQuestionRegister: '/admin/question_register',
+  AdminQuestionModify: '/admin/question_modify',
   User: "/user",
   Study: "/user/study/:id",
   Daily: "/user/daily",

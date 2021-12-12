@@ -118,9 +118,9 @@ const Login: React.FC<Props> = ({history}) =>  {
         dispatch(setUser(user));
 
         if (jwtUtils.isAdmin(user)) {
-          history.push('/admin/student');
+          history.push(ROUTES_PATH.AdminMark);
         } else {
-          history.push('/');
+          history.push(ROUTES_PATH.Daily);
         }
       } else {
         // 에러가 있다면 catch문에서 처리된다.
