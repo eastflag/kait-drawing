@@ -122,8 +122,16 @@ export const Study: React.FC<Props> = ({match}) => {
   return (
     <div className={styles.container}>
       <Row className={styles.header} align="middle" justify="space-between">
-        <Space></Space>
         <div>{assessment?.grade} - {currentQuestion.chapter}</div>
+        <Popconfirm
+          title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
+          onConfirm={submitAssessment}
+          okText="Yes"
+          cancelText="No"
+          disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}
+        >
+          <Button type="primary" disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>제출</Button>
+        </Popconfirm>
       </Row>
       <div className={styles.body}>
         <MyCanvas answers={answers} setAnswers={setAnswers} marks={marks} saveAnswers={saveAnswers}
@@ -149,19 +157,8 @@ export const Study: React.FC<Props> = ({match}) => {
             ))
           }
         </Space>
-        <Space>
-          <Button type="primary" ghost onClick={saveAnswers}
-                  disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>저장</Button>
-          <Popconfirm
-            title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
-            onConfirm={submitAssessment}
-            okText="Yes"
-            cancelText="No"
-            disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}
-          >
-            <Button type="primary" disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>제출</Button>
-          </Popconfirm>
-        </Space>
+        <Button type="primary" ghost onClick={saveAnswers}
+                disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>저장</Button>
       </Row>
     </div>
   );
