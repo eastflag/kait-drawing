@@ -35,7 +35,9 @@ const Student = ({history}: any) => {
           }
           {
             text === ASSESSMENT_STATUS.FINISH &&
-              <Button type="primary" ghost>완료</Button>
+              <Button type="primary" ghost onClick={() => {
+                history.push(`/admin/grade/${record.user_id}/${record.id}`);
+              }}>완료</Button>
           }
         </Row>
       )
