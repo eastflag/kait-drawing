@@ -28,7 +28,7 @@ const { Option, OptGroup } = Select;
 export const QuestionRegister = ({location}: any) => {
   const [assessmentForm] = Form.useForm();
   const [questionForm] = Form.useForm();
-  const [type, setType] = useState('subjective');
+  const [type, setType] = useState('objective');
   const [questionImage, setQuestionImage] = useState<any>();
   const [assessmentId, setAssessmentId] = useState<string>();
   const [categories, setCategories] = useState<CategoryVO[]>([]);
@@ -100,8 +100,11 @@ export const QuestionRegister = ({location}: any) => {
     const question: any = {
       question_title: values.question_title,
       evaluation_score: values.evaluation_score,
-      content: values.content,
       type: values.type
+    }
+
+    if (values.content) {
+      question.content = values.content;
     }
 
     if (questionImage) {
@@ -228,7 +231,7 @@ export const QuestionRegister = ({location}: any) => {
 
       {/*입력된 문제 리스트업*/}
       {
-        questions.map((question: any) => <Card style={{marginBottom: '0.5rem', fontSize: '12px'}}>
+        questions.map((question: any) => <Card key={question.id} style={{marginBottom: '0.5rem', fontSize: '12px'}}>
           <Row gutter={14}>
             <Col span={6} style={{textAlign: 'end'}}>제목</Col>
             <Col span={18}>{question.question_title}</Col>
@@ -299,12 +302,24 @@ export const QuestionRegister = ({location}: any) => {
           <Form.Item style={{marginBottom: '0.6rem'}}
                      name="question_title"
                      label="제목"
+                     rules={[
+                       {
+                         required: true,
+                         message: '제목을 입력하세요.',
+                       },
+                     ]}
           >
             <Input placeholder="제목을 입력하세요."/>
           </Form.Item>
           <Form.Item style={{marginBottom: '0.6rem'}}
                      name="evaluation_score"
                      label="배점"
+                     rules={[
+                       {
+                         required: true,
+                         message: '배전을 입력하세요.',
+                       },
+                     ]}
           >
             <InputNumber placeholder="배점"/>
           </Form.Item>
