@@ -15,19 +15,19 @@ const QuestionIndex = ({history}: any) => {
 
   const columns = [
     {
-      title: '날짜',
-      dataIndex: 'date',
+      title: '학년',
+      dataIndex: 'category',
       editable: false,
-      key: 'date',
+      key: 'category',
       render: (text: any) => (
         <span>{text}</span>
       )
     },
     {
-      title: '학년',
-      dataIndex: 'grade',
+      title: '단원',
+      dataIndex: 'subCategory',
       editable: false,
-      key: 'grade',
+      key: 'subCategory',
       render: (text: any) => (
         <span>{text}</span>
       )
@@ -43,11 +43,11 @@ const QuestionIndex = ({history}: any) => {
     },
     {
       title: '',
-      dataIndex: 'status',
-      key: 'status',
-      render: (text: any, record: any) => (
+      dataIndex: 'id',
+      key: 'id',
+      render: (text: any) => (
         <Row justify="end">
-          <Button type="primary" ghost>수정</Button>
+          <Button type="primary" ghost onClick={() => history.push(ROUTES_PATH.AdminQuestionRegister + '?id=' + text)}>수정</Button>
         </Row>
       )
     }
