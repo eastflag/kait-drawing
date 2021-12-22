@@ -8,7 +8,7 @@ export const ROUTES_PATH = {
   User: "/user",
   Study: "/user/study/:id",
   Daily: "/user/daily",
-  Category: "/user/category",
+  Score: "/user/score",
   Setting: "/user/setting",
   Profile: "/user/profile",
   Password: "/user/password",

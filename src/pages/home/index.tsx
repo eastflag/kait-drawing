@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 
 import styles from './HomeIndex.module.scss';
+import {ScoreIndex} from "../score";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
@@ -88,18 +89,18 @@ export const HomeIndex = ({history, location}: any) => {
       <Content className={styles.body}>
         <Route path={ROUTES_PATH.Daily} component={Daily}></Route>
         <Route path={ROUTES_PATH.Study} component={Study}></Route>
-        <Route path={ROUTES_PATH.Category} component={Category}></Route>
+        <Route path={ROUTES_PATH.Score} component={ScoreIndex}></Route>
         <Route path={ROUTES_PATH.Setting} component={Setting}></Route>
       </Content>
 
       <Footer className={styles.footer}>
         <div className={styles.box} onClick={() => history.push(ROUTES_PATH.Daily)}>
           <ScheduleOutlined className={styles.icon} />
-          <span className={styles.text}>일별</span>
+          <span className={styles.text}>문제풀이</span>
         </div>
-        <div className={styles.box} onClick={() => history.push(ROUTES_PATH.Category)}>
+        <div className={styles.box} onClick={() => history.push(ROUTES_PATH.Score)}>
           <SnippetsOutlined className={styles.icon} />
-          <span className={styles.text}>카테고리</span>
+          <span className={styles.text}>채점결과</span>
         </div>
         <div className={styles.box} onClick={() => history.push(ROUTES_PATH.Setting)}>
           <SettingOutlined className={styles.icon} />
