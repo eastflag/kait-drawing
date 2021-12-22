@@ -1,16 +1,20 @@
-import {Badge, Calendar} from "antd";
+import {Badge, Button, Calendar, Row, Table} from "antd";
 import moment from "moment";
 import React, {useCallback, useEffect, useState} from "react";
 import {collection, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 import {AssessmentVO} from "../model/AssessmentVO";
+import {UserVO} from "../model/UserVO";
+import {useSelector} from "react-redux";
+import {ROUTES_PATH} from "../../routes";
 
 interface Props {
   history: any;
 }
 
 export const Daily: React.FC<Props> = ({history}) => {
+  const user: UserVO = useSelector(({User}: any) => User);
   const [assessments, setAssessments] = useState<AssessmentVO[]>([]);
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
 
@@ -18,12 +22,52 @@ export const Daily: React.FC<Props> = ({history}) => {
     getAssessments();
   }, []);
 
+  const columns = [
+    {
+      title: '학년',
+      dataIndex: 'category',
+      editable: false,
+      key: 'category',
+      render: (text: any) => (
+        <span>{text}</span>
+      )
+    },
+    {
+      title: '단원',
+      dataIndex: 'subCategory',
+      editable: false,
+      key: 'subCategory',
+      render: (text: any) => (
+        <span>{text}</span>
+      )
+    },
+    {
+      title: '제목',
+      dataIndex: 'title',
+      editable: false,
+      key: 'title',
+      render: (text: any) => (
+        <span>{text}</span>
+      )
+    },
+    {
+      title: '',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text: any) => (
+        <Row justify="end">
+          <Button type="primary" ghost onClick={() => history.push(`/user/study/${text}`)}>문제풀기</Button>
+        </Row>
+      )
+    }
+  ];
+
   const getAssessments = useCallback(async () => {
     // todo: user 정보를 매핑해서 Badge 상태를 표시.
     // todo: 달력 월별 이동시 새로운 상태 가져오기
     // 오늘 날짜의 모든 문제 리스트를 가져온다.
     const todayMonth = moment().format('YYYY-MM-');
-    const q = query(collection(firestore, "assessments"), where("date", ">=", todayMonth + '01'), where("date", "<=", todayMonth + '31'));
+    const q = query(collection(firestore, "assessments"), where("category", "==", user.grade));
     const querySnapshot = await getDocs(q);
     const tempAssessments: any = [];
     querySnapshot.forEach((doc) => {
@@ -33,18 +77,6 @@ export const Daily: React.FC<Props> = ({history}) => {
     setAssessments(tempAssessments);
   }, []);
 
-  const dateCellRender = (value: any) => {
-    // none: warning, processing: processing, submit: success, done: error
-    const listData = assessments.filter(item => item.date === value.format('YYYY-MM-DD'));
-    return <ul className="events">
-      {listData.map((item: AssessmentVO) => (
-        <li key={item.id} onClick={() => history.push(`/user/study/${item.id}`)}>
-          <Badge status="default" text={item.grade} />
-        </li>
-      ))}
-    </ul>
-  }
-
   const onSelect = (value: any) => {
     const index = questions.findIndex(item => item.date === value.format('YYYY-MM-DD'));
     console.log(index);
@@ -53,5 +85,10 @@ export const Daily: React.FC<Props> = ({history}) => {
     }
   }
 
-  return <Calendar dateCellRender={dateCellRender} /*onSelect={onSelect}*//>
+  return (
+    <div>
+      <Table columns={columns} dataSource={assessments} pagination={false}
+             rowKey={record => record.id || ''}></Table>
+    </div>
+  )
 }

@@ -11,6 +11,7 @@ import {UserVO} from "../model/UserVO";
 import {ShapeVO} from "../model/ShapeVO";
 import {AssessmentVO} from "../model/AssessmentVO";
 import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
+import {Checkbox} from "antd-mobile";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -34,6 +35,8 @@ export const Study: React.FC<Props> = ({match}) => {
   const [marks, setMarks] = useState([]);
   // UserQuestions: 채점 점수
   const [score, setScore] = useState(0);
+  // 사용자가 선택한 객관식 답안들
+  const [objectAnswers, setObjectAnswers] = useState<any>([]);
 
   useEffect(() => {
     console.log(match.params);
@@ -57,9 +60,9 @@ export const Study: React.FC<Props> = ({match}) => {
     const assessmentSnap = await getDoc(doc(firestore, 'assessments', assessment_id));
     setAssessment({id: assessmentSnap.id, ...assessmentSnap.data()});
     // UserAssessment: status 가져오기
-    const userAssessmentRef = await getDoc(doc(firestore, `/users/${user.uid}/user_assessments/${assessment_id}`));
-    if (userAssessmentRef.exists()) {
-      setStatus(userAssessmentRef.data().status);
+    const userAssessmentSnap = await getDoc(doc(firestore, `/users/${user.uid}/user_assessments/${assessment_id}`));
+    if (userAssessmentSnap.exists()) {
+      setStatus(userAssessmentSnap.data().status);
     }
 
     // 문제 리스트를 가져오기
@@ -93,17 +96,25 @@ export const Study: React.FC<Props> = ({match}) => {
       } else {
         setScore(0);
       }
+      if (userQuestionSnap.data().objectAnswers) {
+        setObjectAnswers(userQuestionSnap.data().objectAnswers);
+      } else {
+        setObjectAnswers([]);
+      }
     } else {
       setAnswers([]);
       setMarks([]);
       setScore(0);
+      setObjectAnswers([]);
     }
   }
 
   const saveAnswers = async () => {
+    console.log(objectAnswers);
     const userQuestionRef = doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}/user_questions/${questions[currentIndex].id}`);
     await setDoc(userQuestionRef, {
       question: currentQuestion,
+      objectAnswers: objectAnswers,
       answers: answers.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))}))
     }, {merge: true});
     message.info('저장하였습니다.');
@@ -122,7 +133,7 @@ export const Study: React.FC<Props> = ({match}) => {
   return (
     <div className={styles.container}>
       <Row className={styles.header} align="middle" justify="space-between">
-        <div>{assessment?.grade} - {currentQuestion.chapter}</div>
+        <div>{currentQuestion?.question_title} {`(${currentQuestion.evaluation_score} 점)`}</div>
         <Popconfirm
           title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
           onConfirm={submitAssessment}
@@ -134,17 +145,36 @@ export const Study: React.FC<Props> = ({match}) => {
         </Popconfirm>
       </Row>
       <div className={styles.body}>
+        {
+          currentQuestion?.question_image &&
+            <div className={styles.back} style={{backgroundImage: `url('${currentQuestion.question_image}')`}}></div>
+        }
+        {
+          currentQuestion.content &&
+            <div className={styles.question}>
+              <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
+            </div>
+        }
         <MyCanvas answers={answers} setAnswers={setAnswers} marks={marks} saveAnswers={saveAnswers}
                   submit={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}></MyCanvas>
-        <div className={styles.question}>
-          {
-            currentQuestion && <Latex displayMode={true}>{`\$\$${currentQuestion?.content}\$\$`}</Latex>
-          }
-        </div>
         {
           score > 0 &&
             <div className={styles.score}>
               {score} / 10
+            </div>
+        }
+        {
+          currentQuestion.type === 'objective' &&
+            <div className={styles.choices}>
+              <Checkbox.Group value={objectAnswers} onChange={(checkedValues: any) => setObjectAnswers(checkedValues)}>
+                <Space direction='vertical'>
+                  <Checkbox value={1} style={{marginLeft: '1rem'}}>{currentQuestion.choice1}</Checkbox>
+                  { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}}>{currentQuestion.choice2}</Checkbox> }
+                  { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}}>{currentQuestion.choice3}</Checkbox> }
+                  { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}}>{currentQuestion.choice4}</Checkbox> }
+                  { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}}>{currentQuestion.choice5}</Checkbox> }
+                </Space>
+              </Checkbox.Group>
             </div>
         }
       </div>
