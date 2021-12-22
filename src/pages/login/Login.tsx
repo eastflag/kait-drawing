@@ -53,6 +53,7 @@ const Login: React.FC<Props> = ({history}) =>  {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // 구글 로그인후 리다이렉션될때 처리
     getGoogleRedirectResult();
   }, []);
 
