@@ -6,12 +6,13 @@ import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 
 import styles from './Study.module.scss';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {UserVO} from "../model/UserVO";
 import {ShapeVO} from "../model/ShapeVO";
 import {AssessmentVO} from "../model/AssessmentVO";
 import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
 import {Checkbox} from "antd-mobile";
+import {setTitle} from "../../redux/reducers/CommonReducer";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -38,8 +39,9 @@ export const Study: React.FC<Props> = ({match}) => {
   // 사용자가 선택한 객관식 답안들
   const [objectAnswers, setObjectAnswers] = useState<any>([]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    console.log(match.params);
     init();
   }, []);
 
@@ -59,6 +61,9 @@ export const Study: React.FC<Props> = ({match}) => {
     // assessment 가져오기
     const assessmentSnap = await getDoc(doc(firestore, 'assessments', assessment_id));
     setAssessment({id: assessmentSnap.id, ...assessmentSnap.data()});
+
+    dispatch(setTitle(`${assessmentSnap.data()?.category} > ${assessmentSnap.data()?.subCategory} > ${assessmentSnap.data()?.title}`));
+
     // UserAssessment: status 가져오기
     const userAssessmentSnap = await getDoc(doc(firestore, `/users/${user.uid}/user_assessments/${assessment_id}`));
     if (userAssessmentSnap.exists()) {

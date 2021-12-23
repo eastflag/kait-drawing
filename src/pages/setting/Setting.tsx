@@ -6,6 +6,7 @@ import {firestore} from "../../firebase";
 import {doc, setDoc} from "firebase/firestore";
 import {setUser} from "../../redux/reducers/UserReducer";
 import {setLoading} from "../../redux/reducers/NotiReducer";
+import {setTitle} from "../../redux/reducers/CommonReducer";
 
 const gradeList = [
   '중1', '중2', '중3', '고1', '고2', '고3'
@@ -18,6 +19,7 @@ export const Setting = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setTitle('설정'));
     if (user.grade) {
       setGrade(user.grade);
     }

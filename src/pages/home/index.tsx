@@ -24,11 +24,14 @@ import {
 
 import styles from './HomeIndex.module.scss';
 import {ScoreIndex} from "../score";
+import {CommonVO} from "../model/CommonVO";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;
 
 export const HomeIndex = ({history, location}: any) => {
+  const title: string = useSelector(({Common}: any) => Common.title);
+
   const dispatch = useDispatch();
 
   const {currentUser} = useContext(AuthContext);
@@ -76,10 +79,11 @@ export const HomeIndex = ({history, location}: any) => {
             : <LeftOutlined style={{fontSize: '1.4rem'}} onClick={() => history.push('/')} />
         }
         {/*center*/}
-        { location.pathname === '/user/daily' && <span>오늘의 학습</span> }
-        { location.pathname.indexOf('/study') >= 0 && <span>문제 풀이</span> }
-        { location.pathname === '/user/category' && <span>카테고리별 학습</span> }
-        { location.pathname === '/user/setting' && <span>설정</span> }
+        <span>{title}</span>
+        {/*{ location.pathname === '/user/daily' && <span>오늘의 학습</span> }*/}
+        {/*{ location.pathname.indexOf('/study') >= 0 && <span>문제 풀이</span> }*/}
+        {/*{ location.pathname === '/user/category' && <span>카테고리별 학습</span> }*/}
+        {/*{ location.pathname === '/user/setting' && <span>설정</span> }*/}
         {/*right*/}
         <Dropdown overlay={menu} placement="bottomRight">
           <MenuOutlined />

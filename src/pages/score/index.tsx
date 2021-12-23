@@ -1,21 +1,22 @@
 import {UserVO} from "../model/UserVO";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import React, {useCallback, useEffect, useState} from "react";
-import {AssessmentVO} from "../model/AssessmentVO";
-import {QuestionVO} from "../model/QuestionVO";
 import {Button, Row, Table} from "antd";
-import moment from "moment";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
-import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
+import {ASSESSMENT_STATUS, UserAssessmentVO} from "../model/UserAssessmentVO";
+import {CommonVO} from "../model/CommonVO";
+import {setTitle} from "../../redux/reducers/CommonReducer";
 
 export const ScoreIndex = ({history}: any) => {
   const user: UserVO = useSelector(({User}: any) => User);
-  const [assessments, setAssessments] = useState<AssessmentVO[]>([]);
-  const [questions, setQuestions] = useState<QuestionVO[]>([]);
+  const [assessments, setAssessments] = useState<UserAssessmentVO[]>([]);
+  
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getAssessments();
+    dispatch(setTitle('채점결과'));
+    getUserAssessments();
   }, []);
 
   const columns = [
@@ -62,7 +63,7 @@ export const ScoreIndex = ({history}: any) => {
     }
   ];
 
-  const getAssessments = useCallback(async () => {
+  const getUserAssessments = useCallback(async () => {
     // 사용자의 모든 문제 리스트를 가져온다.
     const userAssessmentsRef = collection(firestore, `/users/${user.uid}/user_assessments`);
     const userAssessmentsSnap = await getDocs(userAssessmentsRef);

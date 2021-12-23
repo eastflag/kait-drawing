@@ -3,6 +3,7 @@ import storage from "redux-persist/lib/storage";
 import {combineReducers} from "redux";
 import {UserReducer} from "./UserReducer";
 import {NotiReducer} from "./NotiReducer";
+import {CommonReducer} from "./CommonReducer";
 
 const persistConfig = {
   key: "root",
@@ -16,6 +17,7 @@ const persistConfig = {
 const allReducers = combineReducers({
   User: UserReducer,
   Noti: NotiReducer,
+  Common: CommonReducer
 });
 
 export default persistReducer(persistConfig, allReducers);

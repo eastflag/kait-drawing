@@ -6,8 +6,9 @@ import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 import {AssessmentVO} from "../model/AssessmentVO";
 import {UserVO} from "../model/UserVO";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "../../routes";
+import {setTitle} from "../../redux/reducers/CommonReducer";
 
 interface Props {
   history: any;
@@ -17,8 +18,10 @@ export const Daily: React.FC<Props> = ({history}) => {
   const user: UserVO = useSelector(({User}: any) => User);
   const [assessments, setAssessments] = useState<AssessmentVO[]>([]);
   const [questions, setQuestions] = useState<QuestionVO[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setTitle('문제풀이'));
     getAssessments();
   }, []);
 
