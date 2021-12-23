@@ -38,6 +38,8 @@ export const Study: React.FC<Props> = ({match}) => {
   const [score, setScore] = useState(0);
   // 사용자가 선택한 객관식 답안들
   const [objectAnswers, setObjectAnswers] = useState<any>([]);
+  // 선생님 코멘트
+  const [comment, setComment] = useState();
 
   const dispatch = useDispatch();
 

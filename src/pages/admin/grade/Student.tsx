@@ -13,12 +13,30 @@ const Student = ({history}: any) => {
 
   const columns = [
     {
-      title: '목록',
-      dataIndex: 'id',
+      title: '학년',
+      dataIndex: 'assessment',
       editable: false,
-      key: 'id',
-      render: (text: any, record: any) => (
-        <span>{record.assessment.date}  {record.assessment.grade}</span>
+      key: 'category',
+      render: (assessment: any) => (
+        <span>{assessment.category}</span>
+      )
+    },
+    {
+      title: '단원',
+      dataIndex: 'assessment',
+      editable: false,
+      key: 'subCategory',
+      render: (assessment: any) => (
+        <span>{assessment.subCategory}</span>
+      )
+    },
+    {
+      title: '제목',
+      dataIndex: 'assessment',
+      editable: false,
+      key: 'title',
+      render: (assessment: any) => (
+        <span>{assessment.title}</span>
       )
     },
     {
@@ -47,15 +65,15 @@ const Student = ({history}: any) => {
   const getUserAssessments = async () => {
     // collectionGroup 시 인덱스가 미리 생성되어야 한다.
     const q = query(collectionGroup(firestore, 'user_assessments'));
-    const querySnapshot = await getDocs(q);
+    const userAssessmentsSnapshot = await getDocs(q);
 
-    let tempAssessments: UserAssessmentVO[] = [];
+    let tempUserAssessments: UserAssessmentVO[] = [];
     // todo: 컬렉션 부모의 다큐먼트 조회가 필요
-    querySnapshot.forEach((doc) => {
-      tempAssessments.push({id: doc.id, ...doc.data(), user_id: doc.ref.parent.parent?.id});
+    userAssessmentsSnapshot.forEach((doc) => {
+      tempUserAssessments.push({id: doc.id, ...doc.data(), user_id: doc.ref.parent.parent?.id});
     });
 
-    setUserAssessments(tempAssessments);
+    setUserAssessments(tempUserAssessments);
   }
 
   return (
