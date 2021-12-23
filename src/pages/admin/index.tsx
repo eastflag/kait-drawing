@@ -71,11 +71,13 @@ export const AdminIndex = ({history, location}: any) => {
     <Layout className={styles.container}>
       <Header className={styles.header}>
         {/*left*/}
-        {
-          location.pathname === '/admin' ? <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Admin)} />
-            : <LeftOutlined style={{fontSize: '1.4rem'}} onClick={() => history.goBack()} />
-        }
+        <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Admin)} />
+        {/*{*/}
+        {/*  location.pathname === '/admin' ? <HomeTwoTone onClick={() => history.push(ROUTES_PATH.Admin)} />*/}
+        {/*    : <LeftOutlined style={{fontSize: '1.4rem'}} onClick={() => history.goBack()} />*/}
+        {/*}*/}
         {/*center*/}
+        <span>관리자 홈</span>
         { location.pathname === '/admin' && <span>관리자 홈</span> }
         {/*right*/}
         <Dropdown overlay={menu} placement="bottomRight">
@@ -91,13 +93,13 @@ export const AdminIndex = ({history, location}: any) => {
       </Content>
 
       <Footer className={styles.footer}>
-        <div className={styles.box} onClick={() => history.push(ROUTES_PATH.AdminQuestion)}>
-          <ScheduleOutlined className={styles.icon} />
-          <span className={styles.text}>문제등록</span>
-        </div>
         <div className={styles.box} onClick={() => history.push(ROUTES_PATH.AdminMark)}>
           <SnippetsOutlined className={styles.icon} />
           <span className={styles.text}>채점</span>
+        </div>
+        <div className={styles.box} onClick={() => history.push(ROUTES_PATH.AdminQuestion)}>
+          <ScheduleOutlined className={styles.icon} />
+          <span className={styles.text}>문제등록</span>
         </div>
         <div className={styles.box} onClick={() => history.push('/setting')}>
           <SettingOutlined className={styles.icon} />

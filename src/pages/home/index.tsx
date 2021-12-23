@@ -24,7 +24,6 @@ import {
 
 import styles from './HomeIndex.module.scss';
 import {ScoreIndex} from "../score";
-import {CommonVO} from "../model/CommonVO";
 
 const {Content, Header, Footer} = Layout;
 const {Text} = Typography;

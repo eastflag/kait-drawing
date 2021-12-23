@@ -5,7 +5,6 @@ import {Button, Row, Table} from "antd";
 import {collection, doc, getDoc, getDocs, query, where} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {ASSESSMENT_STATUS, UserAssessmentVO} from "../model/UserAssessmentVO";
-import {CommonVO} from "../model/CommonVO";
 import {setTitle} from "../../redux/reducers/CommonReducer";
 
 export const ScoreIndex = ({history}: any) => {
