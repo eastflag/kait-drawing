@@ -23,7 +23,7 @@ export const ScoreIndex = ({history}: any) => {
       title: '학년',
       dataIndex: 'assessment',
       editable: false,
-      key: 'assessment.category',
+      key: 'category',
       render: (assessment: any) => (
         <span>{assessment.category}</span>
       )
@@ -72,6 +72,7 @@ export const ScoreIndex = ({history}: any) => {
       tempAssessments.push({id: doc.id, ...doc.data()});
     });
     setAssessments(tempAssessments);
+    console.log(tempAssessments);
   }, []);
 
   return (

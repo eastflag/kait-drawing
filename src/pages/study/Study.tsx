@@ -1,4 +1,4 @@
-import {Button, message, Popconfirm, Row, Space} from "antd";
+import {Avatar, Badge, Button, Input, message, Popconfirm, Popover, Row, Space} from "antd";
 import {MyCanvas} from "./MyCanvas";
 import React, {useCallback, useEffect, useState} from "react";
 import {collection, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
@@ -13,6 +13,7 @@ import {AssessmentVO} from "../model/AssessmentVO";
 import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
 import {Checkbox} from "antd-mobile";
 import {setTitle} from "../../redux/reducers/CommonReducer";
+import {UserOutlined} from "@ant-design/icons";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -39,7 +40,7 @@ export const Study: React.FC<Props> = ({match}) => {
   // 사용자가 선택한 객관식 답안들
   const [objectAnswers, setObjectAnswers] = useState<any>([]);
   // 선생님 코멘트
-  const [comment, setComment] = useState();
+  const [comment, setComment] = useState<any>();
 
   const dispatch = useDispatch();
 
@@ -108,6 +109,11 @@ export const Study: React.FC<Props> = ({match}) => {
       } else {
         setObjectAnswers([]);
       }
+      if (userQuestionSnap.data().comment) {
+        setComment(userQuestionSnap.data().comment);
+      } else {
+        setComment('');
+      }
     } else {
       setAnswers([]);
       setMarks([]);
@@ -141,15 +147,24 @@ export const Study: React.FC<Props> = ({match}) => {
     <div className={styles.container}>
       <Row className={styles.header} align="middle" justify="space-between">
         <div>{currentQuestion?.question_title} {`(${currentQuestion.evaluation_score} 점)`}</div>
-        <Popconfirm
-          title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
-          onConfirm={submitAssessment}
-          okText="Yes"
-          cancelText="No"
-          disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}
-        >
-          <Button type="primary" disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>제출</Button>
-        </Popconfirm>
+        <Space>
+          {
+            status === ASSESSMENT_STATUS.FINISH &&
+              <div className={styles.score}>
+                {score} / 10
+              </div>
+          }
+          {
+            (status === ASSESSMENT_STATUS.NONE || status === ASSESSMENT_STATUS.ONGOING) &&
+              <Popconfirm
+                title={<div><p>제출하면 선생님 피드백을 받게 됩니다.</p><p>제출후 수정이 불가능합니다.</p><p>제출하시겠습니까?</p></div>}
+                onConfirm={submitAssessment}
+                okText="Yes"
+                cancelText="No">
+                <Button type="primary">제출</Button>
+              </Popconfirm>
+          }
+        </Space>
       </Row>
       <div className={styles.body}>
         {
@@ -164,12 +179,6 @@ export const Study: React.FC<Props> = ({match}) => {
         }
         <MyCanvas answers={answers} setAnswers={setAnswers} marks={marks} saveAnswers={saveAnswers}
                   submit={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}></MyCanvas>
-        {
-          score > 0 &&
-            <div className={styles.score}>
-              {score} / 10
-            </div>
-        }
         {
           currentQuestion.type === 'objective' &&
             <div className={styles.choices}>
@@ -194,8 +203,21 @@ export const Study: React.FC<Props> = ({match}) => {
             ))
           }
         </Space>
-        <Button type="primary" ghost onClick={saveAnswers}
-                disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>저장</Button>
+        <Space>
+          {
+            status === ASSESSMENT_STATUS.FINISH &&
+              <Popover content={<div>{comment}</div>}
+                       title="comment" trigger="click">
+                <Badge count={comment ? 1 : ''}>
+                  <Avatar icon={<UserOutlined />} style={{cursor: 'pointer'}}></Avatar>
+                </Badge>
+              </Popover>
+          }
+          {
+            (status === ASSESSMENT_STATUS.NONE || status === ASSESSMENT_STATUS.ONGOING) &&
+              <Button type="primary" ghost onClick={saveAnswers}>저장</Button>
+          }
+        </Space>
       </Row>
     </div>
   );
