@@ -9,6 +9,7 @@ import {UserVO} from "../model/UserVO";
 import {useDispatch, useSelector} from "react-redux";
 import {ROUTES_PATH} from "../../routes";
 import {setTitle} from "../../redux/reducers/CommonReducer";
+import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
 
 interface Props {
   history: any;
@@ -57,9 +58,14 @@ export const Daily: React.FC<Props> = ({history}) => {
       title: '',
       dataIndex: 'id',
       key: 'id',
-      render: (text: any) => (
+      render: (text: any, record: any) => (
         <Row justify="end">
-          <Button type="primary" ghost onClick={() => history.push(`/user/study/${text}`)}>문제풀기</Button>
+          <Button type="primary" ghost={!!record.status} onClick={() => history.push(`/user/study/${text}`)}>
+            {!record.status && '문제풀이'}
+            {record.status === ASSESSMENT_STATUS.ONGOING && '작성중'}
+            {record.status === ASSESSMENT_STATUS.SUBMIT && '제출완료'}
+            {record.status === ASSESSMENT_STATUS.FINISH && '채점완료'}
+          </Button>
         </Row>
       )
     }
@@ -78,6 +84,17 @@ export const Daily: React.FC<Props> = ({history}) => {
       tempAssessments.push({id: doc.id, ...doc.data()});
     });
     setAssessments(tempAssessments);
+
+    // user_assessments 정보를 가져와서 상태를 표시한다.
+    // 사용자의 모든 문제 리스트를 가져온다.
+    const userAssessmentsRef = collection(firestore, `/users/${user.uid}/user_assessments`);
+    const userAssessmentsSnap = await getDocs(userAssessmentsRef);
+    userAssessmentsSnap.forEach((doc) => {
+      // doc.id (assessmentId) 를 찾아서 status 업데이트한다.
+      const assessment = tempAssessments.find((item: any) => item.id === doc.id);
+      assessment.status = doc.data().status;
+    });
+    setAssessments([...tempAssessments]);
   }, []);
 
   const onSelect = (value: any) => {
