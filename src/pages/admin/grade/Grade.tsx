@@ -1,11 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Avatar, Badge, Button, Input, InputNumber, message, Popconfirm, Popover, Rate, Row, Space} from "antd";
-import {collection, doc, getDoc, getDocs, query, setDoc, where} from "firebase/firestore";
+import {collection, doc, getDoc, getDocs, orderBy, query, setDoc, where} from "firebase/firestore";
 import {firestore} from "../../../firebase";
 import {QuestionVO} from "../../model/QuestionVO";
 import {GradeCanvas} from "./GradeCanvas";
-
-import styles from "./Grade.module.scss";
 import {ShapeVO} from "../../model/ShapeVO";
 import {AssessmentVO} from "../../model/AssessmentVO";
 import {ASSESSMENT_STATUS} from "../../model/UserAssessmentVO";
@@ -13,6 +11,9 @@ import {UserQuestionVO} from "../../model/UserQuestionVO";
 import {CommentOutlined, FormOutlined, UserOutlined} from "@ant-design/icons";
 import {Checkbox} from "antd-mobile";
 import {isSameArray} from "../../../utils/commonUtils";
+import _ from 'lodash';
+
+import styles from "./Grade.module.scss";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -93,14 +94,15 @@ const Grade = ({match}: any) => {
     // userQuestions 정보를 가져온다.
     const tempQuestions: any = [];
     const tempUserQuestions: any = [];
-    const userQuestionsRef = collection(firestore, `/users/${user_id}/user_assessments/${assessment_id}/user_questions`);
+    const userQuestionsRef = query(collection(firestore, `/users/${user_id}/user_assessments/${assessment_id}/user_questions`));
     const userQuestionsSnap = await getDocs(userQuestionsRef);
     userQuestionsSnap.forEach(doc => {
       tempQuestions.push({id: doc.id, ...doc.data().question});
       tempUserQuestions.push({id: doc.id, ...doc.data()});
     })
-    setQuestions(tempQuestions);
-    setUserQuestions(tempUserQuestions);
+    // questions, userQuestions 문제제목으로 정렬하기
+    setQuestions(_.sortBy(tempQuestions, 'question_title'));
+    setUserQuestions(_.sortBy(tempUserQuestions, 'question.question_title'));
 
     if (tempQuestions.length > 0) {
       setCurrentIndex(0);
