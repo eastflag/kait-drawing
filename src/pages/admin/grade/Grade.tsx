@@ -131,6 +131,12 @@ const Grade = ({match}: any) => {
   }
 
   const submitAssessment = async () => {
+    // 제출 버튼 클릭시 저장: saveMarks가 비동기로 수행되므로 아래 세줄이 필요하다.
+    userQuestions[currentIndex].marks = marks;
+    userQuestions[currentIndex].score = score;
+    userQuestions[currentIndex].comment = comment;
+    saveMarks(currentIndex);
+
     // 채점이 될된게 있는지 체크한다.
     const questionIndex = userQuestions.findIndex(userQuestion => userQuestion.score === undefined);
 
@@ -138,9 +144,6 @@ const Grade = ({match}: any) => {
       message.error(`${questionIndex + 1}번 문제 채점이 되지 않았습니다.`);
       return;
     }
-
-    // 제출 버튼 클릭시 저장
-    saveMarks(currentIndex);
 
     const user_id = match.params.user_id;
     const assessment_id = match.params.assessment_id;
