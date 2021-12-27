@@ -21,3 +21,11 @@ export const isSubmitted = (status: ASSESSMENT_STATUS): boolean => {
     return false;
   }
 }
+
+export const isFinished= (status: ASSESSMENT_STATUS): boolean => {
+  if (status === ASSESSMENT_STATUS.FINISH) {
+    return true;
+  } else {
+    return false;
+  }
+}

@@ -6,7 +6,7 @@ import {QuestionVO} from "../../model/QuestionVO";
 import {GradeCanvas} from "./GradeCanvas";
 import {ShapeVO} from "../../model/ShapeVO";
 import {AssessmentVO} from "../../model/AssessmentVO";
-import {ASSESSMENT_STATUS} from "../../model/UserAssessmentVO";
+import {ASSESSMENT_STATUS, isFinished, isSubmitted} from "../../model/UserAssessmentVO";
 import {UserQuestionVO} from "../../model/UserQuestionVO";
 import {CommentOutlined, FormOutlined, UserOutlined} from "@ant-design/icons";
 import {Checkbox} from "antd-mobile";
@@ -109,14 +109,14 @@ const Grade = ({match}: any) => {
     }
   }, []);
 
-  const saveMarks = async () => {
-    if (score === 0) {
-      message.error('score를 입력하세요.');
+  const saveMarks = async (index: number) => {
+    if (isFinished(status)) {
       return;
     }
+
     const user_id = match.params.user_id;
     const assessment_id = match.params.assessment_id;
-    const userQuestionRef = doc(firestore, `users/${user_id}/user_assessments/${assessment_id}/user_questions/${userQuestions[currentIndex].id}`);
+    const userQuestionRef = doc(firestore, `users/${user_id}/user_assessments/${assessment_id}/user_questions/${userQuestions[index].id}`);
     await setDoc(userQuestionRef, {
       // 파이어스토어 저장시 객체를 json으로 변환해야 함.
       marks: marks.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))})),
@@ -132,12 +132,15 @@ const Grade = ({match}: any) => {
 
   const submitAssessment = async () => {
     // 채점이 될된게 있는지 체크한다.
-    const questionIndex = userQuestions.findIndex(userQuestion => !userQuestion.score || userQuestion.score === 0);
+    const questionIndex = userQuestions.findIndex(userQuestion => userQuestion.score === undefined);
 
     if (questionIndex > -1) {
       message.error(`${questionIndex + 1}번 문제 채점이 되지 않았습니다.`);
       return;
     }
+
+    // 제출 버튼 클릭시 저장
+    saveMarks(currentIndex);
 
     const user_id = match.params.user_id;
     const assessment_id = match.params.assessment_id;
@@ -148,6 +151,12 @@ const Grade = ({match}: any) => {
     }, {merge: true});
     setStatus(ASSESSMENT_STATUS.FINISH);
     message.info('채점완료 하였습니다.');
+  }
+
+  const changePageIndex = (index: number): void => {
+    // 페이지 전환시 저장
+    saveMarks(currentIndex);
+    setCurrentIndex(index);
   }
 
   return (
@@ -173,13 +182,19 @@ const Grade = ({match}: any) => {
           <div className={styles.choices}>
             <Checkbox.Group value={objectAnswers} onChange={(checkedValues: any) => setObjectAnswers(checkedValues)}>
               <Space direction='vertical'>
-                <Checkbox value={1} style={{marginLeft: '1rem'}}>{currentQuestion.choice1}</Checkbox>
-                { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}}>{currentQuestion.choice2}</Checkbox> }
-                { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}}>{currentQuestion.choice3}</Checkbox> }
-                { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}}>{currentQuestion.choice4}</Checkbox> }
-                { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}}>{currentQuestion.choice5}</Checkbox> }
+                <Checkbox value={1} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice1}</Checkbox>
+                { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice2}</Checkbox> }
+                { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice3}</Checkbox> }
+                { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice4}</Checkbox> }
+                { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice5}</Checkbox> }
               </Space>
             </Checkbox.Group>
+          </div>
+        }
+        {
+          currentQuestion.type === 'subjective' &&
+          <div className={styles.answer}>
+            <div className={styles.box}><span>정답:</span></div>
           </div>
         }
       </div>
@@ -188,7 +203,7 @@ const Grade = ({match}: any) => {
           {
             questions.map((q, index) => (
               <Button key={index} type={(index) === currentIndex ? 'primary' : 'ghost'} shape="circle"
-                      onClick={() => setCurrentIndex(index)}>{index + 1}</Button>
+                      onClick={() => changePageIndex(index)}>{index + 1}</Button>
             ))
           }
         </Space>
@@ -200,7 +215,6 @@ const Grade = ({match}: any) => {
               <Avatar icon={<UserOutlined />} style={{cursor: 'pointer'}}></Avatar>
             </Badge>
           </Popover>
-          <Button type="primary" ghost onClick={saveMarks}>저장</Button>
         </Space>
       </Row>
     </div>

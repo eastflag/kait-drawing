@@ -45,6 +45,21 @@
     bottom: 0;
     width: 100%;
   }
+  .answer {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    bottom: 0;
+    padding: 0 2rem 1rem;
+    width: 100%;
+    .box {
+      border: 2px solid #cccccc;
+      height: 3rem;
+      line-height: 3rem;
+      padding-left: 1rem;
+      color: #aaaaaa;
+    }
+  }
 }
 .footer{
   height: 2.4rem;
