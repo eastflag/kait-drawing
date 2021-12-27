@@ -183,7 +183,7 @@ export const Study: React.FC<Props> = ({match}) => {
           currentQuestion.type === 'objective' &&
             <div className={styles.choices}>
               <Checkbox.Group value={objectAnswers} onChange={(checkedValues: any) => setObjectAnswers(checkedValues)}>
-                <Space direction='vertical'>
+                <Space direction='vertical' size={0}>
                   <Checkbox value={1} style={{marginLeft: '1rem'}}>{currentQuestion.choice1}</Checkbox>
                   { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}}>{currentQuestion.choice2}</Checkbox> }
                   { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}}>{currentQuestion.choice3}</Checkbox> }
@@ -191,6 +191,12 @@ export const Study: React.FC<Props> = ({match}) => {
                   { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}}>{currentQuestion.choice5}</Checkbox> }
                 </Space>
               </Checkbox.Group>
+            </div>
+        }
+        {
+          currentQuestion.type === 'subjective' &&
+            <div className={styles.answer}>
+              <div className={styles.box}><span>정답:</span></div>
             </div>
         }
       </div>
