@@ -297,7 +297,7 @@ export const QuestionRegister = ({location}: any) => {
               labelCol={{span: 6}}
               wrapperCol={{span: 18}}
               name="question_form"
-              initialValues={{type: 'objective'}}
+              initialValues={{question_title: `Q${questions.length + 1}. `, type: 'objective', evaluation_score: 10}}
               onFinish={onQuestionFinish}>
           <Form.Item style={{marginBottom: '0.6rem'}}
                      name="question_title"
