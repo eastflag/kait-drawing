@@ -212,7 +212,7 @@ const Grade = ({match}: any) => {
         </Space>
         <Space>
           <span><InputNumber style={{width: '3.5rem'}} value={score} onChange={(value: any) => setScore(value)} />/{currentQuestion.evaluation_score}</span>
-          <Popover content={<Input.TextArea rows={3} value={comment} onChange={(e: any) => setComment(e.target.value)} />}
+          <Popover content={<Input.TextArea rows={3} value={comment} onChange={(e: any) => setComment(e.target.value)} style={{width: '60vw'}} />}
                    title="comment" trigger="click">
             <Badge count={comment ? 1 : ''}>
               <Avatar icon={<UserOutlined />} style={{cursor: 'pointer'}}></Avatar>
