@@ -1,7 +1,7 @@
 import {Avatar, Badge, Button, Input, message, Popconfirm, Popover, Row, Space} from "antd";
 import {MyCanvas} from "./MyCanvas";
 import React, {useCallback, useEffect, useState} from "react";
-import {collection, doc, getDoc, getDocs, setDoc} from "firebase/firestore";
+import {collection, doc, getDoc, getDocs, query, setDoc, orderBy} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 
@@ -74,7 +74,8 @@ export const Study: React.FC<Props> = ({match}) => {
     }
 
     // 문제 리스트를 가져오기
-    const querySnapshot = await getDocs(collection(firestore, `assessments/${assessment_id}/questions`));
+    const q = query(collection(firestore, `assessments/${assessment_id}/questions`), orderBy('question_title'));
+    const querySnapshot = await getDocs(q);
     const tempQuestions: any = [];
     querySnapshot.forEach((doc) => {
       // data(), id로 다큐먼트 필드, id 조회
