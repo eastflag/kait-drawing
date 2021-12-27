@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {UserVO} from "../model/UserVO";
 import {ShapeVO} from "../model/ShapeVO";
 import {AssessmentVO} from "../model/AssessmentVO";
-import {ASSESSMENT_STATUS} from "../model/UserAssessmentVO";
+import {ASSESSMENT_STATUS, isSubmitted} from "../model/UserAssessmentVO";
 import {Checkbox} from "antd-mobile";
 import {setTitle} from "../../redux/reducers/CommonReducer";
 import {UserOutlined} from "@ant-design/icons";
@@ -124,7 +124,7 @@ export const Study: React.FC<Props> = ({match}) => {
   }
 
   const saveAnswers = async (index: number) => {
-    if (status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH) {
+    if (isSubmitted(status)) {
       return;
     }
 
@@ -191,17 +191,17 @@ export const Study: React.FC<Props> = ({match}) => {
             </div>
         }
         <MyCanvas answers={answers} setAnswers={setAnswers} marks={marks} saveAnswers={saveAnswers}
-                  submit={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}></MyCanvas>
+                  submit={isSubmitted(status)}></MyCanvas>
         {
           currentQuestion.type === 'objective' &&
             <div className={styles.choices}>
               <Checkbox.Group value={objectAnswers} onChange={(checkedValues: any) => setObjectAnswers(checkedValues)}>
                 <Space direction='vertical' size={0}>
-                  <Checkbox value={1} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice1}</Checkbox>
-                  { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice2}</Checkbox> }
-                  { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice3}</Checkbox> }
-                  { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice4}</Checkbox> }
-                  { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice5}</Checkbox> }
+                  <Checkbox value={1} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice1}</Checkbox>
+                  { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice2}</Checkbox> }
+                  { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice3}</Checkbox> }
+                  { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice4}</Checkbox> }
+                  { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}} disabled={isSubmitted(status)}>{currentQuestion.choice5}</Checkbox> }
                 </Space>
               </Checkbox.Group>
             </div>

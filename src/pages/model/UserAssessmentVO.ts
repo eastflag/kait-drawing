@@ -13,3 +13,11 @@ export enum ASSESSMENT_STATUS {
   SUBMIT,
   FINISH
 }
+
+export const isSubmitted = (status: ASSESSMENT_STATUS): boolean => {
+  if (status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH) {
+    return true;
+  } else {
+    return false;
+  }
+}
