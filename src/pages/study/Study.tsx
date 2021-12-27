@@ -1,7 +1,7 @@
-import {Avatar, Badge, Button, Input, message, Popconfirm, Popover, Row, Space} from "antd";
+import {Avatar, Badge, Button, message, Popconfirm, Popover, Row, Space} from "antd";
 import {MyCanvas} from "./MyCanvas";
 import React, {useCallback, useEffect, useState} from "react";
-import {collection, doc, getDoc, getDocs, query, setDoc, orderBy} from "firebase/firestore";
+import {collection, doc, getDoc, getDocs, orderBy, query, setDoc} from "firebase/firestore";
 import {firestore} from "../../firebase";
 import {QuestionVO} from "../model/QuestionVO";
 
@@ -123,9 +123,13 @@ export const Study: React.FC<Props> = ({match}) => {
     }
   }
 
-  const saveAnswers = async () => {
+  const saveAnswers = async (index: number) => {
+    if (status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH) {
+      return;
+    }
+
     console.log(objectAnswers);
-    const userQuestionRef = doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}/user_questions/${questions[currentIndex].id}`);
+    const userQuestionRef = doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}/user_questions/${questions[index].id}`);
     await setDoc(userQuestionRef, {
       question: currentQuestion,
       objectAnswers: objectAnswers,
@@ -135,6 +139,8 @@ export const Study: React.FC<Props> = ({match}) => {
   }
 
   const submitAssessment = async () => {
+    // 제출 버튼 클릭시 저장
+    saveAnswers(currentIndex);
     const userAssessmentRef = doc(firestore, `/users/${user.uid}/user_assessments/${match.params.id}`);
     await setDoc(userAssessmentRef, {
       assessment: assessment,
@@ -142,6 +148,12 @@ export const Study: React.FC<Props> = ({match}) => {
     }, {merge: true});
     setStatus(ASSESSMENT_STATUS.SUBMIT);
     message.info('제출하였습니다.');
+  }
+
+  const changePageIndex = (index: number): void => {
+    // 페이지 전환시 저장
+    saveAnswers(currentIndex);
+    setCurrentIndex(index);
   }
 
   return (
@@ -185,11 +197,11 @@ export const Study: React.FC<Props> = ({match}) => {
             <div className={styles.choices}>
               <Checkbox.Group value={objectAnswers} onChange={(checkedValues: any) => setObjectAnswers(checkedValues)}>
                 <Space direction='vertical' size={0}>
-                  <Checkbox value={1} style={{marginLeft: '1rem'}}>{currentQuestion.choice1}</Checkbox>
-                  { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}}>{currentQuestion.choice2}</Checkbox> }
-                  { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}}>{currentQuestion.choice3}</Checkbox> }
-                  { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}}>{currentQuestion.choice4}</Checkbox> }
-                  { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}}>{currentQuestion.choice5}</Checkbox> }
+                  <Checkbox value={1} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice1}</Checkbox>
+                  { currentQuestion.choice2 && <Checkbox value={2} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice2}</Checkbox> }
+                  { currentQuestion.choice3 && <Checkbox value={3} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice3}</Checkbox> }
+                  { currentQuestion.choice4 && <Checkbox value={4} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice4}</Checkbox> }
+                  { currentQuestion.choice5 && <Checkbox value={5} style={{marginLeft: '1rem'}} disabled={status === ASSESSMENT_STATUS.SUBMIT || status === ASSESSMENT_STATUS.FINISH}>{currentQuestion.choice5}</Checkbox> }
                 </Space>
               </Checkbox.Group>
             </div>
@@ -206,7 +218,7 @@ export const Study: React.FC<Props> = ({match}) => {
           {
             questions.map((q, index) => (
               <Button key={index} type={(index) === currentIndex ? 'primary' : 'ghost'} shape="circle"
-                onClick={() => setCurrentIndex(index)}>{index + 1}</Button>
+                onClick={() => changePageIndex(index)}>{index + 1}</Button>
             ))
           }
         </Space>
@@ -219,10 +231,6 @@ export const Study: React.FC<Props> = ({match}) => {
                   <Avatar icon={<UserOutlined />} style={{cursor: 'pointer'}}></Avatar>
                 </Badge>
               </Popover>
-          }
-          {
-            (status === ASSESSMENT_STATUS.NONE || status === ASSESSMENT_STATUS.ONGOING) &&
-              <Button type="primary" ghost onClick={saveAnswers}>저장</Button>
           }
         </Space>
       </Row>
