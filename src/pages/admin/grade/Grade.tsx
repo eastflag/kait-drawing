@@ -82,6 +82,8 @@ const Grade = ({match}: any) => {
         setScore(0);
       }
     }
+    // 시작 시간 저장
+    saveStartTime(currentIndex);
   }, [currentIndex]);
 
   const init = useCallback(async () => {
@@ -121,13 +123,23 @@ const Grade = ({match}: any) => {
       // 파이어스토어 저장시 객체를 json으로 변환해야 함.
       marks: marks.map((item: ShapeVO) => ({...item, pointList: item.pointList.map(point => ({...point}))})),
       score: score,
-      comment: comment || ''
+      comment: comment || '',
+      endTime: new Date().getTime()
     }, {merge: true});
     // 로컬에 저장한다. 파이어스토어를 다시 조회하지 않아도 된다.
     userQuestions[currentIndex].marks = marks;
     userQuestions[currentIndex].score = score;
     userQuestions[currentIndex].comment = comment;
     message.info('저장하였습니다.');
+  }
+
+  const saveStartTime = async (index: number) => {
+    const user_id = match.params.user_id;
+    const assessment_id = match.params.assessment_id;
+    const userQuestionRef = doc(firestore, `users/${user_id}/user_assessments/${assessment_id}/user_questions/${userQuestions[index].id}`);
+    await setDoc(userQuestionRef, {
+      startTime: new Date().getTime()
+    }, {merge: true});
   }
 
   const submitAssessment = async () => {
