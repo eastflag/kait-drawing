@@ -28,7 +28,7 @@ const { Option, OptGroup } = Select;
 export const QuestionRegister = ({location}: any) => {
   const [assessmentForm] = Form.useForm();
   const [questionForm] = Form.useForm();
-  const [type, setType] = useState('objective');
+  const [type, setType] = useState('objective'); // objective, subjective, subjectiveDescription
   const [questionImage, setQuestionImage] = useState<any>();
   const [assessmentId, setAssessmentId] = useState<string>();
   const [categories, setCategories] = useState<CategoryVO[]>([]);
@@ -242,7 +242,7 @@ export const QuestionRegister = ({location}: any) => {
           </Row>
           <Row gutter={14}>
             <Col span={6} style={{textAlign: 'end'}}>유형</Col>
-            <Col span={18}>{question.type === 'objective' ? '객관식' : '주관식'}</Col>
+            <Col span={18}>{question.type === 'objective' ? '객관식' : question.type === 'subjective' ? '단답형' : '서술형'}</Col>
           </Row>
           <Row gutter={14}>
             <Col span={6} style={{textAlign: 'end'}}>문제 이미지</Col>
@@ -335,7 +335,8 @@ export const QuestionRegister = ({location}: any) => {
           >
             <Select placeholder="유형을 선택하세요" onChange={onTypeChanged}>
               <Option value="objective">객관식</Option>
-              <Option value="subjective">주관식</Option>
+              <Option value="subjective">단답형</Option>
+              <Option value="subjectiveDescription">서술형</Option>
             </Select>
           </Form.Item>
           <Form.Item style={{marginBottom: '0.6rem'}}
