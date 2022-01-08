@@ -13,7 +13,7 @@ import {AssessmentVO} from "../model/AssessmentVO";
 import {ASSESSMENT_STATUS, isSubmitted} from "../model/UserAssessmentVO";
 import {Checkbox} from "antd-mobile";
 import {setTitle} from "../../redux/reducers/CommonReducer";
-import {UserOutlined} from "@ant-design/icons";
+import {UndoOutlined, UserOutlined} from "@ant-design/icons";
 
 // es6 모듈 import 에러남
 const Latex = require('react-latex');
@@ -156,16 +156,26 @@ export const Study: React.FC<Props> = ({match}) => {
     setCurrentIndex(index);
   }
 
+  const redoAnswers = () => {
+    const tempAnswers = [...answers];
+    tempAnswers.pop();
+    setAnswers(tempAnswers);
+  }
+
   return (
     <div className={styles.container}>
       <Row className={styles.header} align="middle" justify="space-between">
         <div>{currentQuestion?.question_title} {`(${currentQuestion.evaluation_score} 점)`}</div>
-        <Space>
+        <Space size="large">
           {
             status === ASSESSMENT_STATUS.FINISH &&
               <div className={styles.score}>
                 {score} / 10
               </div>
+          }
+          {
+            (status === ASSESSMENT_STATUS.NONE || status === ASSESSMENT_STATUS.ONGOING) &&
+              <UndoOutlined onClick={redoAnswers} />
           }
           {
             (status === ASSESSMENT_STATUS.NONE || status === ASSESSMENT_STATUS.ONGOING) &&

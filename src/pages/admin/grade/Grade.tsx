@@ -8,7 +8,7 @@ import {ShapeVO} from "../../model/ShapeVO";
 import {AssessmentVO} from "../../model/AssessmentVO";
 import {ASSESSMENT_STATUS, isFinished, isSubmitted} from "../../model/UserAssessmentVO";
 import {UserQuestionVO} from "../../model/UserQuestionVO";
-import {CommentOutlined, FormOutlined, UserOutlined} from "@ant-design/icons";
+import {CommentOutlined, FormOutlined, UndoOutlined, UserOutlined} from "@ant-design/icons";
 import {Checkbox} from "antd-mobile";
 import {isSameArray} from "../../../utils/commonUtils";
 import _ from 'lodash';
@@ -174,11 +174,20 @@ const Grade = ({match}: any) => {
     setCurrentIndex(index);
   }
 
+  const redoMarks = () => {
+    const tempMarks = [...marks];
+    tempMarks.pop();
+    setMarks(tempMarks);
+  }
+
   return (
     <div className={styles.container}>
       <Row className={styles.header} align="middle" justify="space-between">
         <div>{currentQuestion?.question_title} {`(${currentQuestion.evaluation_score} 점)`}</div>
-        <Button type="primary" onClick={submitAssessment}>채점완료</Button>
+        <Space size="large">
+          <UndoOutlined onClick={redoMarks} />
+          <Button type="primary" onClick={submitAssessment}>채점완료</Button>
+        </Space>
       </Row>
       <div className={styles.body}>
         {

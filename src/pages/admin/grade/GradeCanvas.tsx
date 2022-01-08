@@ -64,6 +64,8 @@ export const GradeCanvas: React.FC<Props> = ({answers, marks}) => {
   }, [answers]);
 
   useEffect(() => {
+    // 지우기
+    contextRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     // 선생님 채점 그리기
     marks.forEach((item: ShapeVO) => {
       if (item.pointList.length >= 2) {
