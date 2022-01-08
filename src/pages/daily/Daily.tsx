@@ -76,7 +76,13 @@ export const Daily: React.FC<Props> = ({history}) => {
     // todo: 달력 월별 이동시 새로운 상태 가져오기
     // 오늘 날짜의 모든 문제 리스트를 가져온다.
     const todayMonth = moment().format('YYYY-MM-');
-    const q = query(collection(firestore, "assessments"), where("category", "==", user.grade));
+    let q;
+    if (user.grade) {
+      q = query(collection(firestore, "assessments"), where("category", "==", user.grade));
+    } else {
+      q = query(collection(firestore, "assessments"));
+    }
+
     const querySnapshot = await getDocs(q);
     const tempAssessments: any = [];
     querySnapshot.forEach((doc) => {
