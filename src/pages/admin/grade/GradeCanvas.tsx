@@ -83,7 +83,7 @@ export const GradeCanvas: React.FC<Props> = ({answers, marks}) => {
 
   const drawingStart = (x: number, y: number) => {
     // 저장
-    drObj = new ShapeVO(new Date().getTime(), 1, '#ff0000', ShapeType.POINT);
+    drObj = new ShapeVO(new Date().getTime(), 2, '#ff0000', ShapeType.POINT);
     drObj.pointList.push(new PointVO(x, y));
   }
 
@@ -141,7 +141,7 @@ export const GradeCanvas: React.FC<Props> = ({answers, marks}) => {
       // palm rejection
       if (touch.radiusX < 0.01) {
         // 저장
-        const drObj = new ShapeVO(new Date().getTime(), 1, '#ff0000', ShapeType.POINT);
+        const drObj = new ShapeVO(new Date().getTime(), 2, '#ff0000', ShapeType.POINT);
         drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
         drObj.identifier = touch.identifier;
         drList.push(drObj);

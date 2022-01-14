@@ -81,7 +81,7 @@ export const MyCanvas: React.FC<Props> = ({answers, setAnswers, marks, submit, s
 
   const drawingStart = (x: number, y: number) => {
     // 저장
-    drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+    drObj = new ShapeVO(new Date().getTime(), 2, '#333333', ShapeType.POINT);
     drObj.pointList.push(new PointVO(x, y));
   }
 
@@ -97,7 +97,7 @@ export const MyCanvas: React.FC<Props> = ({answers, setAnswers, marks, submit, s
     contextRef.current.beginPath();
     contextRef.current.moveTo(drObj.pointList[length - 2].x, drObj.pointList[length - 2].y);
     contextRef.current.lineTo(drObj.pointList[length - 1].x, drObj.pointList[length - 1].y);
-    contextRef.current.lineWidth = 1;
+    contextRef.current.lineWidth = drObj.lineWidth;
     contextRef.current.stroke();
   }
 
@@ -142,7 +142,7 @@ export const MyCanvas: React.FC<Props> = ({answers, setAnswers, marks, submit, s
       // palm rejection
       if (touch.radiusX < 0.01) {
         // 저장
-        const drObj = new ShapeVO(new Date().getTime(), 1, '#333333', ShapeType.POINT);
+        const drObj = new ShapeVO(new Date().getTime(), 2, '#333333', ShapeType.POINT);
         drObj.pointList.push(new PointVO(touch.pageX - rect.left, touch.pageY - rect.top));
         drObj.identifier = touch.identifier;
         drList.push(drObj);
@@ -170,7 +170,7 @@ export const MyCanvas: React.FC<Props> = ({answers, setAnswers, marks, submit, s
         contextRef.current.beginPath();
         contextRef.current.moveTo(currentTouch.pointList[length - 2].x, currentTouch.pointList[length - 2].y);
         contextRef.current.lineTo(currentTouch.pointList[length - 1].x, currentTouch.pointList[length - 1].y);
-        contextRef.current.lineWidth = 1;
+        contextRef.current.lineWidth = drObj.lineWidth;
         contextRef.current.stroke();
       }
     }
